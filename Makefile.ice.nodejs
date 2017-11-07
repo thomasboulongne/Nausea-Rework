@@ -1,0 +1,87 @@
+### -*- mode: makefile; mode: auto-fill; -*-
+
+help:
+	echo usage for preview : make (clean|deps|start|build|audit|install) 
+	echo usage for production : make prod (clean|deps|start|build|audit|install)
+
+.PHONY: %.ssh
+
+# default to prev MODE
+ifeq (,$(findstring prod,$(MAKECMDGOALS)))
+MODE = prev
+%.ssh: MODULE = $(PREV_MODULE)
+%.ssh: LOGIN = $(PREV_LOGIN)
+endif
+
+ifneq (,$(findstring prod,$(MAKECMDGOALS)))
+$(warning *** warning !!! PRODUCTION MODE ***)
+MODE = prod
+%.ssh: MODULE = $(PROD_MODULE)
+%.ssh: LOGIN = $(PROD_LOGIN)
+endif
+
+%.ssh: DIST_DIR = /var/www/$(MODULE)
+%.ssh: SSH_HOST = $(LOGIN)@$(HOST)
+%.ssh: SSH_BASE = $(SSH_HOST):$(DIST_DIR)
+
+ifneq (,$(findstring xxx,$(MAKECMDGOALS)))
+$(error "ice make error: please only use xxx as dependency")
+endif
+
+ifndef MODE
+$(error "ice make error: cannot guess MODE")
+endif
+
+.PHONY: sync-static sync-lib
+
+STATIC_DIST = $(foreach src,$(STATIC_SRC),$(src).ssh)
+$(STATIC_DIST): %.ssh: $(COMPONENT)/%
+	$(RSYNC) $(SYNC_OPTS) -r --exclude=".*" $< $(SSH_BASE)/$(subst $(COMPONENT)/$(STATIC_SRC),,$<)/www
+
+sync-static: $(STATIC_DIST)
+
+LIB_DIST = $(COMPONENT).ssh
+$(LIB_DIST): %.ssh: $(COMPONENT)
+	$(RSYNC) $(SYNC_OPTS) -r --exclude=".*" $(COMPONENT_LIB_EXCLUDES) $</ $(SSH_BASE)/lib/$(COMPONENT_LIB_DIST)/
+
+sync-lib: $(LIB_DIST)
+
+$(STATIC_DIST): build
+
+.PHONY: clean deps start build audit install-static install-static install
+
+clean::
+	cd $(COMPONENT); find -name \*~ | xargs rm -f
+
+ifndef CUSTOM_DEPS
+deps: $(COMPONENT)/package.json $(COMPONENT)/yarn.lock
+	cd $(COMPONENT); yarn install
+endif
+
+ifndef CUSTOM_BUILD
+build:
+	cd $(COMPONENT); npm run build
+endif
+
+ifndef CUSTOM_START
+start:
+	cd $(COMPONENT); npm start
+endif
+
+PHONY: $(MODE)
+
+$(MODE):
+ifeq ($(MODE),prod)
+	@read -p "Are you sure you want to launch make for production : $(SSH_BASE) ? " R; if [ "$$R" != "y" ]; then exit 1; fi
+else
+	@echo 'mode is "$(MODE)"'
+endif
+
+audit-static audit-lib: SYNC_OPTS=--dry-run
+
+audit-static install-static: clean sync-static
+audit-lib install-lib: clean sync-lib
+
+audit: audit-static audit-lib
+install: install-static install-lib
+

@@ -1,0 +1,13 @@
+{
+	"prev": {
+		"multilang": false,
+		"url": "http://localhost:3000",
+		"slug": "spill-prev"
+	},
+	"prod": {
+		"multilang": false,
+		"url": "https://spill.net",
+		"slug": "spill",
+		"main_analytics": "UA-00000000-0"
+	}
+}

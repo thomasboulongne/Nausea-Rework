@@ -1,0 +1,16 @@
+### -*- mode: makefile; mode: auto-fill; -*-
+
+# on which ice server the site is hosted
+HOST = metis
+
+COMPONENT = cdg
+# generic make rule to include
+MAKE_MODEL = ice.nodejs
+
+# destination for prev and prod mode
+
+PREV_MODULE = preview.comtedegrasse.com
+PREV_LOGIN = prevcdg
+
+PROD_MODULE = comtedegrasse.com
+PROD_LOGIN = comtedegrasse
