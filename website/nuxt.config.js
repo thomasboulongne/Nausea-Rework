@@ -75,6 +75,11 @@ module.exports = {
       {
         test: /\.svg$/,
         loader: 'svg-inline-loader'
+      },
+      {
+        test: /\.(glsl|frag|vert)$/,
+        exclude: /node_modules/,
+        loader: 'raw!glslify'
       }
     ],
     plugins: [

@@ -14,8 +14,7 @@
 				<span> avant </span>
 				<span>ces </span>
 				<span>derniers </span>
-				<span>jours</span>
-				<span>, </span>
+				<span>jours, </span>
 				<span>je </span>
 				<span>n'avais </span>
 				<span>pressenti </span>
@@ -23,7 +22,7 @@
 				<span>que </span>
 				<span>voulait </span>
 				<span>dire </span>
-				<span>exister</span>
+				<span>exister.</span>
 			</div>
 		</div>
 	</div>
@@ -61,60 +60,24 @@ export default {
 
 					switch(i) {
 						case 0: // Jamais,
-							duration = 0.7;
+							duration = 1.2;
 							delay = 0;
 							break;
 						case 1: // avant
-							duration = 0.5;
-							delay = 0.1;
+							duration = 2;
+							delay = -0.3;
 							break;
-						case 2: // ces
-							duration = 0.4;
-							delay = 0;
+						case 5: // je
+							duration = 2;
+							delay = 0.2;
 							break;
-						case 3: // derniers
-							duration = 0.4;
-							delay = 0;
+						case 12: // exister
+							duration = 3;
+							delay = -0.6;
 							break;
-						case 4: // jours
-							duration = 0.6;
-							delay = 0;
-							break;
-						case 5: // ,
-							duration = 0.7;
-							delay = 0.4;
-							break;
-						case 6: // je
-							duration = 0.7;
-							delay = 0;
-							break;
-						case 7: // n'avais
-							duration = 0.7;
-							delay = 0;
-							break;
-						case 8: // pressenti
-							duration = 0.7;
-							delay = 0;
-							break;
-						case 9: // ce
-							duration = 0.7;
-							delay = 0;
-							break;
-						case 10: // que
-							duration = 0.7;
-							delay = 0;
-							break;
-						case 11: // voulait
-							duration = 0.7;
-							delay = 0;
-							break;
-						case 12: // dire
-							duration = 0.7;
-							delay = 0;
-							break;
-						case 13: // exister
-							duration = 0.7;
-							delay = 0;
+						default:
+							duration = 2;
+							delay = -1.8;
 							break;
 					}
 
