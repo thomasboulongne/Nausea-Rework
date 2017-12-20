@@ -16,6 +16,11 @@ const store = () => new Vuex.Store({
 			locale: 'en-US'
 		},
 
+		WebGL: {
+			cursor: 0,
+			home: true
+		},
+
 		toLoadTotal: 0,
 
 		loadedCount: 0,
@@ -30,7 +35,7 @@ const store = () => new Vuex.Store({
 			state.pages.push(page);
 		},
 		ADD_OBJECT(state, object) {
-			state.objects[object.name] = object.obj;
+			state.objects[object.name] = object.mesh;
 		},
 		UPDATE_VIEWPORT_SIZE(state, size) {
 			state.uiData.viewportSize = size;
@@ -52,6 +57,12 @@ const store = () => new Vuex.Store({
 		},
 		ADD_TRANSLATION(state, translation) {
 			state.translations.push(translation);
+		},
+		UPDATE_WEBGL_CURSOR(state) {
+			state.WebGL.cursor = new Date().getTime();
+		},
+		UPDATE_WEBGL_HOME(state, homeState) {
+			state.WebGL.home = homeState;
 		}
 	},
 
@@ -82,6 +93,15 @@ const store = () => new Vuex.Store({
 		},
 		setLang({ commit }, lang) {
 			commit('SET_LANG', lang);
+		},
+		updateWebglCursor({ commit }) {
+			commit('UPDATE_WEBGL_CURSOR');
+		},
+		updateWebglHome({ commit }, homeState) {
+			commit('UPDATE_WEBGL_HOME', homeState);
+		},
+		goToExperience({ commit }) {
+			commit('UPDATE_WEBGL_HOME', 'goToExperience');
 		}
 	},
 
@@ -94,7 +114,13 @@ const store = () => new Vuex.Store({
 		translation: state => identifier => {
 			return state.translations.find(t => t.identifier == identifier) ? state.translations.find(t => t.identifier == identifier).translations : identifier;
 		},
-		lang: state => state.uiData.lang
+		lang: state => state.uiData.lang,
+		webglCursor: state => state.WebGL.cursor,
+		home: state => state.WebGL.home,
+		objects: state => state.objects,
+		object: state => name => {
+			return state.objects[name];
+		}
 	}
 });
 

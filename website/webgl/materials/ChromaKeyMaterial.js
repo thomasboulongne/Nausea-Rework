@@ -2,12 +2,12 @@ import vertexShader from '../shaders/ChromaKeyMaterial/vert.glsl';
 import fragmentShader from '../shaders/ChromaKeyMaterial/frag.glsl';
 
 class ChromaKeyMaterial extends THREE.ShaderMaterial {
-	constructor(url, r, g, b, opFactor, options) {
+	constructor(url, r, g, b, opFactor = 1, options) {
 		super();
 
 		if(!options) options = {};
 
-		this.opFactor = opFactor ? opFactor : 1;
+		this.opFactor = opFactor;
 
 		this.url = url;
 		this.colorKey = new THREE.Color(r, g, b);

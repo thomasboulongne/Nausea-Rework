@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import loadingComp from '~components/Loading';
-import homeComp from '~components/Home';
+import loadingComp from '~/components/Loading';
+import homeComp from '~/components/Home';
 
 export default {
 	computed: {
@@ -15,6 +15,21 @@ export default {
 			return this.$store.getters.loaded;
 		}
 	},
+
+	watch: {
+		'$store.getters.home': function(val) {
+			if(val == 'goToExperience') {
+				this.goToExperience();
+			}
+		}
+	},
+
+	methods: {
+		goToExperience() {
+			console.log('goToExperience');
+		}
+	},
+
 	components: {
 		loadingComp,
 		homeComp

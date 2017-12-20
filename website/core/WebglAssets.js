@@ -16,10 +16,10 @@ export const getObjects = function(Store) {
 	assetsLists.objects.forEach(model => {
 		promises.push(
 			new Promise(resolve => {
-				AWDLoader.load('/assets3d/' + model.name + '.awd', obj => {
+				AWDLoader.load('/assets3d/' + model.name + '.awd', mesh => {
 					Store.dispatch('addObject', {
 						name: model.name,
-						obj: obj
+						mesh: mesh
 					});
 					resolve();
 				});
@@ -36,7 +36,7 @@ export const getAll = function(Store) {
 			getObjects(Store)
 		];
 		return Promise.all(promises).then(() => {
-			Store.dispatch('hasLoaded');
+			console.log('Assets are loaded');
 		});
 	} else {
 		return new Promise(resolve => resolve());

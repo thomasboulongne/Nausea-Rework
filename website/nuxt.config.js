@@ -70,20 +70,21 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
+
+      config.module.rules.push({
+        test: /\.svg$/, loader: 'svg-inline-loader', exclude: /node_modules/
+      });
+
+      config.module.rules.push({
+        test: /\.(glsl|frag|vert)$/, loader: 'raw-loader', exclude: /node_modules/
+      });
+
+      config.module.rules.push({
+        test: /\.(glsl|frag|vert)$/, loader: 'glslify-loader', exclude: /node_modules/
+      });
     },
-    loaders: [
-      {
-        test: /\.svg$/,
-        loader: 'svg-inline-loader'
-      },
-      {
-        test: /\.(glsl|frag|vert)$/,
-        exclude: /node_modules/,
-        loader: 'raw!glslify'
-      }
-    ],
     plugins: [
-      new FaviconsWebpackPlugin('static/images/logo_sm.png'),      
+      new FaviconsWebpackPlugin('static/images/logo_sm.png'),
       new webpack.ProvidePlugin({
         'THREE': 'three'
       })

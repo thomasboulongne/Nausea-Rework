@@ -43,11 +43,11 @@ THREE.PointerLockControls = function(camera, position, lookat, fluidity) {
 		let newX = -xRange * percX - this.orientation;
 		let newY = -yRange * percY + 1;
 
-		TweenLite.to(this.yawObject.rotation, .6, { y: newX});
-		TweenLite.to(this.pitchObject.rotation, .6, { x: newY});
+		TweenLite.to(this.yawObject.rotation, 0.6, {y: newX});
+		TweenLite.to(this.pitchObject.rotation, 0.6, {x: newY});
 	};
 
-	document.addEventListener('mousemove', throttle(onMouseMove,1).bind(this), false);
+	document.addEventListener('mousemove', throttle(onMouseMove, 1).bind(this), false);
 
 	this.enabled = false;
 
@@ -55,24 +55,25 @@ THREE.PointerLockControls = function(camera, position, lookat, fluidity) {
 		camera.lookAt(lookat);
 	}
 
-	this.getObject = function () {
+	this.getObject = function() {
 		return this.yawObject;
 	};
 
-	this.getPitch = function () {
+	this.getPitch = function() {
 		return this.pitchObject;
 	};
 
 	this.getDirection = function() {
 		// assumes the camera itself is not rotated
+		let direction = new THREE.Vector3(0, 0, -1);
+		let rotation = new THREE.Euler(0, 0, 0, 'YXZ');
 
-		let direction = new THREE.Vector3( 0, 0, - 1 );
-		let rotation = new THREE.Euler( 0, 0, 0, 'YXZ' );
-
-		return function( v ) {
-			rotation.set( this.pitchObject.rotation.x, this.yawObject.rotation.y, 0 );
-			v.copy( direction ).applyEuler( rotation );
+		return function(v) {
+			rotation.set(this.pitchObject.rotation.x, this.yawObject.rotation.y, 0);
+			v.copy(direction).applyEuler(rotation);
 			return v;
 		};
-	}();
+	};
+
+	this.getDirection();
 };

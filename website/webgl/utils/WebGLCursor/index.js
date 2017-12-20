@@ -2,14 +2,14 @@ import './style.scss';
 import SoundManager from '~/core/SoundManager';
 
 class WebglCursor {
-	constructor(domElt, eventKey, options) {
+	constructor(domElt, Store, options = {}) {
 		this.domElt = domElt;
 
 		this.domElt.style.cursor = 'none';
 
-		this.eventKey = eventKey;
+		this.options = options;
 
-		this.options = options ? options : {};
+		this.Store = Store;
 
 		this.color = this.options.color ? this.options.color : '#FFFFFF';
 
@@ -40,7 +40,7 @@ class WebglCursor {
 
 			let cx = -offset;
 
-			elt.innerHTML = '<circle cx='' + cx + '' cy='' + cx + '' r='' + this.circleSize / 2 + '' style='fill: none;stroke:' + this.color + ';'/></circle>';
+			elt.innerHTML = `<circle cx="${cx}" cy="${cx}" r="${this.circleSize / 2}" style="fill: none;stroke: ${this.color};"/></circle>`;
 
 			this.domElt.appendChild(elt);
 
@@ -134,12 +134,12 @@ class WebglCursor {
 			onUpdate: () => {
 				let current = totalDuration.value;
 				if(current <= steps[0]) {
-					this.updateSVG( large, steps[0], lgSVGSize, lgSize, lgOffset, current );
-					this.updateSVG( progress, steps[0], lgSVGSize, lgSize, lgOffset, current );
+					this.updateSVG(large, steps[0], lgSVGSize, lgSize, lgOffset, current);
+					this.updateSVG(progress, steps[0], lgSVGSize, lgSize, lgOffset, current);
 				}
 
 				if(current <= steps[1]) {
-					this.updateSVG( middle, steps[1], mdSVGSize, mdSize, mdOffset, current);
+					this.updateSVG(middle, steps[1], mdSVGSize, mdSize, mdOffset, current);
 				}
 
 				let current2 = current - 1100;
@@ -149,7 +149,7 @@ class WebglCursor {
 			},
 			onComplete: () => {
 				SoundManager.play('complete');
-				Emitter.emit(this.eventKey);
+				this.Store.dispatch('updateWebglCursor');
 			}
 		}).pause();
 	}
@@ -189,7 +189,7 @@ class WebglCursor {
 		elt.style.width = this.easeOutExpo(current, SVGSize.from, SVGSize.to - SVGSize.from, duration);
 		elt.style.height = this.easeOutExpo(current, SVGSize.from, SVGSize.to - SVGSize.from, duration);
 		elt.style.display = 'block';
-		elt.style.opacity = this.easeOutExpo(current, 0, .7, duration);
+		elt.style.opacity = this.easeOutExpo(current, 0, 0.7, duration);
 
 		elt.circle.setAttribute('cx', this.easeOutExpo(current, offset.from, offset.to - offset.from, duration) * -1);
 		elt.circle.setAttribute('cy', this.easeOutExpo(current, offset.from, offset.to - offset.from, duration) * -1);
@@ -197,13 +197,13 @@ class WebglCursor {
 	}
 
 	// t: current time, b: begInnIng value, c: change In value, d: duration
-	easeOutExpo (t, b, c, d) {
+	easeOutExpo(t, b, c, d) {
 		return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
 	}
 	easeInOutExpo(t, b, c, d) {
 		if(t == 0) return b;
-		if(t == d) return b+c;
-		if((t / = d / 2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+		if(t == d) return b + c;
+		if((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
 		return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
 	}
 }

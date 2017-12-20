@@ -18,6 +18,8 @@ import HomeLights from './lights/HomeLights';
 
 import { throttle } from 'lodash';
 
+import ModelObject from './objects/ModelObject';
+
 class HomeScene {
 	/**
 	 * @constructor
@@ -25,8 +27,6 @@ class HomeScene {
 	constructor(domElement, Store) {
 		this.domElement = domElement;
 		this.Store = Store;
-
-		this.cursor = new WebglCursor(this.domElement, 'CURSOR_ENTER');
 
 		this.width = window.innerWidth;
 		this.height = window.innerHeight;
@@ -47,11 +47,11 @@ class HomeScene {
 			y: this.halfHeight
 		};
 
-		this.center = new THREE.Vector3( 0, 1, 0 );
+		this.center = new THREE.Vector3(0, 1, 0);
 
 		this.cameraPositionInitial = {
 			x: -10,
-			y: -.3,
+			y: -0.3,
 			z: 0
 		};
 
@@ -61,13 +61,13 @@ class HomeScene {
 			z: 0
 		};
 
-		this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, .1, 1000 );
+		this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-		this.camera.position.set( this.cameraPositionInitial.x, this.cameraPositionInitial.y, this.cameraPositionInitial.z );
+		this.camera.position.set(this.cameraPositionInitial.x, this.cameraPositionInitial.y, this.cameraPositionInitial.z);
 
 		this.camera.lookAt(this.center);
 
-		this.scene.fog = new THREE.FogExp2( this.environmentColor, .1 );
+		this.scene.fog = new THREE.FogExp2(this.environmentColor, 0.1);
 
 		this.setLights();
 
@@ -77,7 +77,7 @@ class HomeScene {
 
 		this.setSounds();
 
-		this.initObjects();
+		this.createObjects();
 
 		this.addEventListeners();
 
@@ -130,19 +130,20 @@ class HomeScene {
 	setComposer() {
 		this.composer = new Wagner.Composer(this.renderer);
 
+		this.composer.setSize(window.innerWidth, window.innerHeight);
+
 		this.passes = [
 			new NoisePass({
-				amount: .05
+				amount: 0.05
 			}),
 			new VignettePass({
 				boost: 1,
-				reduction: .4
+				reduction: 0.4
 			})
 		];
 	}
 
 	setRaycast() {
-
 		this.INTERSECTED = false;
 
 		this.raycastMeshes = [];
@@ -169,146 +170,75 @@ class HomeScene {
 		SoundManager.play('atmos01');
 	}
 
-	initObjects() {
-		let objs = [
-			{
-				'name': 'bench',
-				'materialize': true
-			},
-			{
-				'name': 'chestnut',
-				'materialize': true
-			},
-			{
-				'name': 'fern',
-				'materialize': true
-			},
-			{
-				'name': 'fountain',
-				'materialize': true
-			},
-			{
-				'name': 'kiosque',
-				'materialize': true
-			},
-			{
-				'name': 'mineral',
-				'materialize': true
-			},
-			{
-				'name': 'sartre_bench_intro',
-				'materialize': false
-			},
-			{
-				'name': 'sartre_bench_xp',
-				'materialize': false
-			},
-			{
-				'name': 'sartres',
-				'materialize': true
-			},
-			{
-				'name': 'shrub',
-				'materialize': false
-			},
-			{
-				'name': 'stand',
-				'materialize': true
-			},
-			{
-				'name': 'statue',
-				'materialize': true
-			},
-			{
-				'name': 'streetLamp',
-				'materialize': false
-			},
-			{
-				'name': 'root',
-				'materialize': false
-			},
-			{
-				'name': 'root2',
-				'materialize': false
-			},
-			{
-				'name': 'root02',
-				'materialize': false
-			}
-		];
-
-		let promises = [];
-		for (let i = 0; i < objs.length; i++) {
-			promises.push(Store.get(objs[i].name, objs[i]));
-		}
-
-		Promise.all(promises)
-		.then(() => {
-			this.createObjects();
-		});
-	}
-
 	/**
 	 * Create and load the 3d objects
 	 */
 	createObjects() {
 		this.field = new Field();
-		
+
 		this.title = new HomeTitle();
 
-		this.particles = new Particles('particleWhite', 500, { x: 10});
+		this.particles = new Particles('particleWhite', 500, {x: 10});
 
 		this.skybox = new Skybox('assets2d/homeSkybox/');
 
+		this.bench = new ModelObject(this.Store.getters.object('sartre_bench_intro'), {
+			'name': 'sartre_bench_intro',
+			'x': 0,
+			'y': -0.22,
+			'z': 0,
+			'color': 0xcacaca
+		});
+
 		Promise.all([
-			Store.get('sartre_bench_intro',{
-				'name': 'sartre_bench_intro',
-				'x': 0,
-				'y': -5,
-				'z': 0,
-				'color': 0xcacaca
-			}),
 			this.skybox.load(),
 			this.field.load(),
 			this.particles.load()
 		])
 		.then(data => {
-			this.bench = data[0];
-			this.bench.mesh.position.y = -0.22;
-			this.scene.background = data[1];
+			this.scene.background = data[0];
 
 			this.add(this.title.mesh);
 			this.add(this.bench.mesh);
 			this.add(this.field.mesh);
 			this.add(this.particles.mesh);
 
-			this.raycastMeshes.push( this.bench.mesh );
+			this.raycastMeshes.push(this.bench.mesh);
 			this.startRaycast = true;
-		});		
+		});
 	}
 
 	/**
 	 * Add all the listeners
 	 */
 	addEventListeners() {
-		this.bindResize = this.onResize.bind(this);
-		window.addEventListener('resize', this.bindResize);
-		this.bindClick = this.onClick.bind(this);
-		Emitter.on('CURSOR_ENTER', this.bindClick);
+		this.Store.watch((state, getters) => { return getters.viewportSize; }, () => {
+			this.onResize();
+		});
+
+		this.Store.watch((state, getters) => { return getters.webglCursor; }, () => {
+			this.onClick();
+		});
+
+		this.Store.watch((state, getters) => { return getters.home; }, val => {
+			if(val == 'cursorReady') {
+				this.cursor = new WebglCursor(this.domElement, this.Store);
+			}
+		});
+
 		this.bindRender = this.render.bind(this);
 		TweenMax.ticker.addEventListener('tick', this.bindRender);
-		this.bindEnter = this.enter.bind(this);
-		Emitter.on('LOADING_COMPLETE', this.bindEnter);
+
+		this.Store.watch((state, getters) => { return getters.loaded; }, () => {
+			this.enter();
+		});
 	}
 
 	/**
 	 * remove all the listeners
 	 */
 	removeEventListeners() {
-		window.removeEventListener('resize', this.bindResize);
-		this.domElement.removeEventListener('click', this.bindClick);
 		TweenMax.ticker.removeEventListener('tick', this.bindRender);
-		Emitter.off('LOADING_COMPLETE', this.bindEnter);
 		window.removeEventListener('mousemove', this.boundMouseMove);
 	}
 
@@ -322,39 +252,38 @@ class HomeScene {
 	 */
 	updateCameraPosition(event) {
 		throttle(() => {
-			this.mouseRaycast.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			this.mouseRaycast.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+			this.mouseRaycast.x = (event.clientX / window.innerWidth) * 2 - 1;
+			this.mouseRaycast.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
 			this.mousePosition.x = event.clientX;
 			this.mousePosition.y = event.clientY;
-			this.percentX = ( this.mousePosition.x - this.halfWidth ) * 100 / this.halfWidth;
-			this.percentY = ( this.mousePosition.y - this.halfHeight ) * 100 / this.halfHeight;
+			this.percentX = (this.mousePosition.x - this.halfWidth) * 100 / this.halfWidth;
+			this.percentY = (this.mousePosition.y - this.halfHeight) * 100 / this.halfHeight;
 
 			TweenLite.to(this.camera.position, 1, {
-				y: this.cameraPosition.y + this.percentY * .002,
-				z: this.cameraPosition.z + this.percentX * .006,
+				y: this.cameraPosition.y + this.percentY * 0.002,
+				z: this.cameraPosition.z + this.percentX * 0.006,
 				ease: Expo.easeOut
 			});
 		}, 100)(event);
 	}
 
 	onMouseEnter() {
-		if(!this.in) {
-			Emitter.emit('HOME_MOUSEENTER');
-
+		if(!this.in && this.cursor) {
 			this.cursor.onMouseEnter();
 		}
 		this.in = true;
 	}
 
 	onMouseLeave() {
-		Emitter.emit('HOME_MOUSELEAVE');
 		this.in = false;
-		this.cursor.onMouseLeave();
+		if(this.cursor) {
+			this.cursor.onMouseLeave();
+		}
 	}
 
 	onClick() {
-		if( this.INTERSECTED ) {
+		if(this.INTERSECTED) {
 			this.exit();
 		}
 	}
@@ -364,10 +293,10 @@ class HomeScene {
 	 */
 	enter() {
 		let tl = new TimelineLite();
-		tl.to(this.camera.position, 2,  {
+		tl.to(this.camera.position, 2, {
 			x: -5.5,
 			y: 0,
-			z: -.4,
+			z: -0.4,
 			ease: Power2.easeIn
 		})
 		.to(this.camera.position, 2, {
@@ -375,40 +304,40 @@ class HomeScene {
 			y: this.cameraPosition.y,
 			z: this.cameraPosition.z,
 			ease: Power2.easeOut,
-			onComplete: ()=>{
+			onComplete: () => {
 				this.boundMouseMove = event => this.updateCameraPosition(event);
 				window.addEventListener('mousemove', this.boundMouseMove);
 				this.endStartAnimation = true;
-				Emitter.emit('HOME_ENDENTER');
+				this.Store.dispatch('updateWebglHome', 'endEnter');
 			}
-		}, "-=0.5");
+		}, '-=0.5');
 	}
 
 	exit() {
 		this.startRaycast = false;
 		if(!this.exitFlag) {
 			SoundManager.play('enter');
-			let exitTime = .7;
+			let exitTime = 0.7;
 			let tl = new TimelineLite();
 			tl.to(this.camera.position, exitTime, {
-				x: -.1,
-				y: .9,
-				z: .2,
+				x: -0.1,
+				y: 0.9,
+				z: 0.2,
 				ease: Power4.easeIn,
-				onComplete: ()=>{
-					Emitter.emit('GOTO_EXPERIENCE');
+				onComplete: () => {
+					this.Store.dispatch('goToExperience');
 				}
 			}, 0)
 			.to(this.center, exitTime, {
-				x: -.1,
-				y: .9,
-				z: .2,
-				ease: Power4.easeIn,
+				x: -0.1,
+				y: 0.9,
+				z: 0.2,
+				ease: Power4.easeIn
 			}, 0)
-			.to(this.passes[1].params, exitTime * .7, {
+			.to(this.passes[1].params, exitTime * 0.7, {
 				boost: 7,
-				ease: Power4.easeIn,
-			}, .3);
+				ease: Power4.easeIn
+			}, 0.3);
 		}
 
 		this.exitFlag = true;
@@ -422,30 +351,31 @@ class HomeScene {
 	render() {
 		this.homeLights.update();
 
-		//Particles 
+		// Particles
 
-		if(this.particles)
+		if(this.particles) {
 			this.particles.update();
+		}
 
-		if(this.title)
-			this.title.update();
+		// if(this.title) {
+		// 	this.title.update();
+		// }
 
 		this.renderer.autoClearColor = true;
 
-		this.camera.lookAt( this.center );
+		this.camera.lookAt(this.center);
 
-		if( this.startRaycast ) {
-			this.raycaster.setFromCamera( this.mouseRaycast, this.camera );
+		if(this.startRaycast) {
+			this.raycaster.setFromCamera(this.mouseRaycast, this.camera);
 
-			let intersects = this.raycaster.intersectObjects( this.raycastMeshes, true );
+			let intersects = this.raycaster.intersectObjects(this.raycastMeshes, true);
 
-			if ( intersects.length == 0 ) {
+			if(intersects.length == 0) {
 				if(this.INTERSECTED) {
 					this.onMouseLeave();
 				}
 				this.INTERSECTED = false;
-			}
-			else {
+			} else {
 				if(!this.INTERSECTED) {
 					this.onMouseEnter();
 				}
@@ -457,9 +387,9 @@ class HomeScene {
 		this.composer.reset();
 		this.composer.render(this.scene, this.camera);
 
-		for (let i = 0; i < this.passes.length; i++) {
-			this.composer.pass(this.passes[i]);
-		}
+		// for (let i = 0; i < this.passes.length; i++) {
+		// 	this.composer.pass(this.passes[i]);
+		// }
 
 		this.composer.toScreen();
 	}

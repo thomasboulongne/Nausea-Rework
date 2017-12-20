@@ -3,8 +3,8 @@ import VertexShader from '../shaders/Particles/vert.glsl';
 import FragmentShader from '../shaders/Particles/frag.glsl';
 
 class Particles {
-	constructor(particleTexture, particlesNumber, position) {
-		this.particleTexture = particleTexture ? particleTexture : 'particle';
+	constructor(particleTexture = 'particle', particlesNumber = 500, position) {
+		this.particleTexture = particleTexture;
 
 		if(this.position) {
 			this.position = {
@@ -20,7 +20,7 @@ class Particles {
 			};
 		}
 
-		this.verticesNumber = particlesNumber ? particlesNumber : 500;
+		this.verticesNumber = particlesNumber;
 
 		this.vertices = [];
 
@@ -40,42 +40,37 @@ class Particles {
 			TextureLoader.load('./assets2d/' + this.particleTexture + '.png', texture => {
 				this.uniformsParticles = {
 
-					color:      { type: 'c', value: new THREE.Color(0x999999) },
-					texture:    { type: 't', value: texture },
-					globalTime:	{ type: 'f', value: 0.0 },
-					bass:		{ type: 'f', value: 1.0 },
-					scale: 	{ type: 'f', value: window.innerHeight * 0.04 },
-
+					color: {type: 'c', value: new THREE.Color(0x999999)},
+					texture: {type: 't', value: texture},
+					globalTime:	{type: 'f', value: 0.0},
+					bass: {type: 'f', value: 1.0},
+					scale: {type: 'f', value: window.innerHeight * 0.04}
 				};
 
 				let shaderMaterial = new THREE.ShaderMaterial({
-
-					uniforms: 		this.uniformsParticles,
-					vertexShader:     VertexShader,
-					fragmentShader:   FragmentShader,
+					uniforms: this.uniformsParticles,
+					vertexShader: VertexShader,
+					fragmentShader: FragmentShader,
 					// blending: 		THREE.AdditiveBlending,
-					transparent:	true
-					
+					transparent: true
 				});
 
 				this.bufferGeometry = new THREE.BufferGeometry();
 
 				let vertices = this.vertices;
-				let values_size = [];
-				let values_time = [];
+				let valuesSize = [];
+				let valuesTime = [];
 
-				for(let v = 0; v < vertices.length; v++) {
-					
-					values_time[ v ] = Math.random();
-					values_size[ v ] = 1.0 + Math.random() * 2;
-
+				for (let v = 0; v < vertices.length; v++) {
+					valuesTime[ v ] = Math.random();
+					valuesSize[ v ] = 1.0 + Math.random() * 2;
 				}
 
-				values_size = Float32Array.from(values_size);
-				values_time = Float32Array.from(values_time);
+				valuesSize = Float32Array.from(valuesSize);
+				valuesTime = Float32Array.from(valuesTime);
 
-				this.bufferGeometry.addAttribute('size', new THREE.BufferAttribute(values_size, 1));
-				this.bufferGeometry.addAttribute('time', new THREE.BufferAttribute(values_time, 1));
+				this.bufferGeometry.addAttribute('size', new THREE.BufferAttribute(valuesSize, 1));
+				this.bufferGeometry.addAttribute('time', new THREE.BufferAttribute(valuesTime, 1));
 				this.bufferGeometry.addAttribute('position', new THREE.BufferAttribute(this.verticesAttribute, 3));
 
 				this.mesh = new THREE.Points(this.bufferGeometry, shaderMaterial);
@@ -89,7 +84,7 @@ class Particles {
 		let time = Date.now();
 		let delta = time - this.oldTime;
 		this.oldTime = time;
-		if (this.uniformsParticles) {
+		if(this.uniformsParticles) {
 			this.uniformsParticles.globalTime.value += delta * 0.0012;
 		}
 	}

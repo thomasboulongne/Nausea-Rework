@@ -4,8 +4,7 @@ class Field {
 
 		return new Promise(resolve => {
 			img.onload = () => {
-
-				//get height data from img
+				// get height data from img
 				let data = this.dataFromImage(img);
 
 				// plane
@@ -24,10 +23,9 @@ class Field {
 				this.mesh.position.y = -4;
 
 				this.mesh.rotation.x = -Math.PI / 2;
-				//this.mesh.rotation.z = NumberUtils.toRadians( 180 );
 
-				//set height of vertices
-				for ( let i = 0; i<this.mesh.geometry.vertices.length; i++ ) {
+				// set height of vertices
+				for (let i = 0; i < this.mesh.geometry.vertices.length; i++) {
 					this.mesh.geometry.vertices[i].z = data[i] * 8;
 				}
 
@@ -51,7 +49,7 @@ class Field {
 		let size = image.width * image.height;
 		let data = new Float32Array(size);
 
-		context.drawImage(image,0,0);
+		context.drawImage(image, 0, 0);
 
 		for (let i = 0; i < size; i++) {
 			data[i] = 0;

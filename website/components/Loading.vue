@@ -41,7 +41,22 @@ export default {
 	watch: {
 		percentage: function(val) {
 			if(val == 100) {
-				const tl = new TimelineLite({paused: true});
+				this.$store.dispatch('hasLoaded');
+				const tl = new TimelineLite({
+					paused: true,
+					onComplete: () => {
+						let tlOut = new TimelineLite();
+						tlOut.to(this.$refs.quote, 2, {
+							opacity: 0,
+							onComplete: () => {
+								this.$store.dispatch('updateWebglHome', 'cursorReady');
+								TweenLite.set(this.$el, {
+									display: 'none'
+								});
+							}
+						});
+					}
+				});
 
 				tl.to(this.$refs.loading, 2, {
 					opacity: 0,
