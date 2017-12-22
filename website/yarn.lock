@@ -5202,6 +5202,12 @@ postcss@^6.0.0, postcss@^6.0.1, postcss@^6.0.10, postcss@^6.0.11, postcss@^6.0.1
     source-map "^0.6.1"
     supports-color "^4.4.0"
 
+postprocessing@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/postprocessing/-/postprocessing-4.1.0.tgz#67d5bd004fde4a7921cf82c72c873ca89633d957"
+  dependencies:
+    three "0.89.x"
+
 prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
@@ -6284,6 +6290,10 @@ tar@^2.0.0, tar@^2.2.1:
 text-table@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
+
+three@0.89.x:
+  version "0.89.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.89.0.tgz#4442d819a6168871b8d2cb37ad12a24310c170f5"
 
 three@^0.88.0:
   version "0.88.0"

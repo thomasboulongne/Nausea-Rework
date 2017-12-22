@@ -22,7 +22,6 @@ class HomeLights {
 		return spotLight;
 	}
 
-
 	update() {
 		if(this.lights.length) {
 			this.lights[0].position.x = Math.sin(this.time * 0.7) * 10;

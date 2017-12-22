@@ -1,6 +1,6 @@
-import Wagner from '@superguigui/wagner';
-import NoisePass from '@superguigui/wagner/src/passes/noise/noise';
-import VignettePass from '@superguigui/wagner/src/passes/vignette/VignettePass';
+import { EffectComposer, RenderPass } from 'postprocessing';
+// import NoisePass from '@superguigui/wagner/src/passes/noise/noise';
+// import VignettePass from '@superguigui/wagner/src/passes/vignette/VignettePass';
 
 import './utils/PointerLockControls';
 
@@ -128,19 +128,29 @@ class HomeScene {
 	 * Add the possprocess composer and the passes
 	 */
 	setComposer() {
-		this.composer = new Wagner.Composer(this.renderer);
+		this.composer = new EffectComposer(this.renderer);
 
-		this.composer.setSize(window.innerWidth, window.innerHeight);
+		const renderPass = new RenderPass(this.scene, this.camera);
 
-		this.passes = [
-			new NoisePass({
-				amount: 0.05
-			}),
-			new VignettePass({
-				boost: 1,
-				reduction: 0.4
-			})
-		];
+		renderPass.renderToScreen = true;
+		this.composer.addPass(renderPass);
+
+		this.clock = new THREE.Clock();
+
+		// let pass = new SMAAPass(assets.get("smaa-search"), assets.get("smaa-area"));
+		// pass.renderToScreen = true;
+		// this.smaaPass = pass;
+		// composer.addPass(pass);
+
+		// this.passes = [
+		// 	new NoisePass({
+		// 		amount: 0.05
+		// 	}),
+		// 	new VignettePass({
+		// 		boost: 1,
+		// 		reduction: 0.4
+		// 	})
+		// ];
 	}
 
 	setRaycast() {
@@ -204,7 +214,6 @@ class HomeScene {
 			this.add(this.particles.mesh);
 
 			this.raycastMeshes.push(this.bench.mesh);
-			this.startRaycast = true;
 		});
 	}
 
@@ -223,6 +232,8 @@ class HomeScene {
 		this.Store.watch((state, getters) => { return getters.home; }, val => {
 			if(val == 'cursorReady') {
 				this.cursor = new WebglCursor(this.domElement, this.Store);
+				this.enter();
+				this.startRaycast = true;
 			}
 		});
 
@@ -357,10 +368,6 @@ class HomeScene {
 			this.particles.update();
 		}
 
-		// if(this.title) {
-		// 	this.title.update();
-		// }
-
 		this.renderer.autoClearColor = true;
 
 		this.camera.lookAt(this.center);
@@ -383,15 +390,7 @@ class HomeScene {
 				this.INTERSECTED = true;
 			}
 		}
-
-		this.composer.reset();
-		this.composer.render(this.scene, this.camera);
-
-		// for (let i = 0; i < this.passes.length; i++) {
-		// 	this.composer.pass(this.passes[i]);
-		// }
-
-		this.composer.toScreen();
+		this.composer.render(this.clock.getDelta());
 	}
 
 	/**

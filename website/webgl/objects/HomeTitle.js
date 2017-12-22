@@ -14,15 +14,6 @@ class HomeTitle {
 		this.mesh.rotation.y = toRadians(-90);
 		this.mesh.position.y = 2;
 	}
-
-	/**
-	 * @method
-	 * @name update
-	 * @description Triggered on every TweenMax tick
-	 */
-	update() {
-		this.material.update();
-	}
 }
 
 export default HomeTitle;
