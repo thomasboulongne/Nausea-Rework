@@ -32,6 +32,12 @@
 import SoundManager from '~/core/SoundManager';
 
 export default {
+	data() {
+		return {
+			skip: true
+		};
+	},
+
 	computed: {
 		percentage: function() {
 			return Math.floor(this.$store.getters.loadedPercentage);
@@ -42,70 +48,83 @@ export default {
 		percentage: function(val) {
 			if(val == 100) {
 				this.$store.dispatch('hasLoaded');
-				const tl = new TimelineLite({
-					paused: true,
-					onComplete: () => {
-						let tlOut = new TimelineLite();
-						tlOut.to(this.$refs.quote, 2, {
-							opacity: 0,
-							onComplete: () => {
-								this.$store.dispatch('updateWebglHome', 'cursorReady');
-								TweenLite.set(this.$el, {
-									display: 'none'
-								});
-							}
-						});
-					}
-				});
-
-				tl.to(this.$refs.loading, 2, {
-					opacity: 0,
-					delay: 1
-				})
-				.add(() => {
-					SoundManager.play('01');
-				})
-				;
-
-				const words = Array.from(this.$refs.quote.querySelector('.container').children);
-
-				words.forEach((word, i) => {
-					let duration = 0.3;
-					let delay = 0;
-
-					switch(i) {
-						case 0: // Jamais,
-							duration = 1.2;
-							delay = 0;
-							break;
-						case 1: // avant
-							duration = 2;
-							delay = -0.3;
-							break;
-						case 5: // je
-							duration = 2;
-							delay = 0.2;
-							break;
-						case 12: // exister
-							duration = 3;
-							delay = -0.6;
-							break;
-						default:
-							duration = 2;
-							delay = -1.8;
-							break;
-					}
-
-					tl.to(word, duration, {
-						opacity: 1,
-						y: 0,
-						ease: Power3.easeOut,
-						delay: delay
+				if(!this.skip) {
+					this.animateQuote();
+				} else {
+					this.$store.dispatch('updateWebglHome', 'cursorReady');
+					TweenLite.set(this.$el, {
+						display: 'none'
 					});
-				});
-
-				tl.play();
+				}
 			}
+		}
+	},
+
+	methods: {
+		animateQuote() {
+			const tl = new TimelineLite({
+				paused: true,
+				onComplete: () => {
+					let tlOut = new TimelineLite();
+					tlOut.to(this.$refs.quote, 2, {
+						opacity: 0,
+						onComplete: () => {
+							this.$store.dispatch('updateWebglHome', 'cursorReady');
+							TweenLite.set(this.$el, {
+								display: 'none'
+							});
+						}
+					});
+				}
+			});
+
+			tl.to(this.$refs.loading, 2, {
+				opacity: 0,
+				delay: 1
+			})
+			.add(() => {
+				SoundManager.play('01');
+			})
+			;
+
+			const words = Array.from(this.$refs.quote.querySelector('.container').children);
+
+			words.forEach((word, i) => {
+				let duration = 0.3;
+				let delay = 0;
+
+				switch(i) {
+					case 0: // Jamais,
+						duration = 1.2;
+						delay = 0;
+						break;
+					case 1: // avant
+						duration = 2;
+						delay = -0.3;
+						break;
+					case 5: // je
+						duration = 2;
+						delay = 0.2;
+						break;
+					case 12: // exister
+						duration = 3;
+						delay = -0.6;
+						break;
+					default:
+						duration = 2;
+						delay = -1.8;
+						break;
+				}
+
+				tl.to(word, duration, {
+					opacity: 1,
+					y: 0,
+					ease: Power3.easeOut,
+					delay: delay
+				});
+			});
+
+			tl.play();
 		}
 	}
 };

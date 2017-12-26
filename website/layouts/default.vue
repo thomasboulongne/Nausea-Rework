@@ -32,6 +32,11 @@ export default {
 		addEventListeners() {
 			window.addEventListener('resize', this.updateViewportSize);
 			window.addEventListener('scroll', this.updateScrollPosition);
+		},
+
+		removeEventListeners() {
+			window.removeEventListener('resize', this.updateViewportSize);
+			window.removeEventListener('scroll', this.updateScrollPosition);
 		}
 	}
 };

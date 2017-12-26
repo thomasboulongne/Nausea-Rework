@@ -2,14 +2,12 @@ import './style.scss';
 import SoundManager from '~/core/SoundManager';
 
 class WebglCursor {
-	constructor(domElt, Store, options = {}) {
+	constructor(domElt, options = {}) {
 		this.domElt = domElt;
 
 		this.domElt.style.cursor = 'none';
 
 		this.options = options;
-
-		this.Store = Store;
 
 		this.color = this.options.color ? this.options.color : '#FFFFFF';
 
@@ -146,10 +144,6 @@ class WebglCursor {
 				if(current2 > 0) {
 					progress.circle.setAttribute('stroke-dashoffset', this.easeInOutExpo(current2, -progress.pathLength_spread, progress.pathLength_spread, 2000));
 				}
-			},
-			onComplete: () => {
-				SoundManager.play('complete');
-				this.Store.dispatch('updateWebglCursor');
 			}
 		}).pause();
 	}
@@ -170,9 +164,16 @@ class WebglCursor {
 	}
 
 	onMouseEnter() {
-		this.tween.timeScale(1).play();
 		SoundManager.play('tick');
 		SoundManager.play('progressbar');
+		return new Promise((resolve, reject) => {
+			this.tween.eventCallback('onComplete', () => {
+				SoundManager.play('complete');
+				resolve();
+			});
+			this.tween.eventCallback('onReverseComplete', reject);
+			this.tween.timeScale(1).play();
+		});
 	}
 
 	onMouseLeave() {

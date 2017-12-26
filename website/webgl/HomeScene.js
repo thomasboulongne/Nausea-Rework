@@ -230,6 +230,7 @@ class HomeScene {
 		});
 
 		this.Store.watch((state, getters) => { return getters.home; }, val => {
+			console.log(val);
 			if(val == 'cursorReady') {
 				this.cursor = new WebglCursor(this.domElement, this.Store);
 				this.enter();
@@ -281,7 +282,12 @@ class HomeScene {
 
 	onMouseEnter() {
 		if(!this.in && this.cursor) {
-			this.cursor.onMouseEnter();
+			this.cursor.onMouseEnter()
+			.then(() => {
+				this.Store.dispatch('updateWebglCursor');
+			})
+			.catch(() => {
+			});
 		}
 		this.in = true;
 	}
@@ -345,10 +351,11 @@ class HomeScene {
 				z: 0.2,
 				ease: Power4.easeIn
 			}, 0)
-			.to(this.passes[1].params, exitTime * 0.7, {
-				boost: 7,
-				ease: Power4.easeIn
-			}, 0.3);
+			// .to(this.passes[1].params, exitTime * 0.7, {
+			// 	boost: 7,
+			// 	ease: Power4.easeIn
+			// }, 0.3)
+			;
 		}
 
 		this.exitFlag = true;
