@@ -30,14 +30,9 @@
 
 <script>
 import SoundManager from '~/core/SoundManager';
+import Config from '~/config.json';
 
 export default {
-	data() {
-		return {
-			skip: true
-		};
-	},
-
 	computed: {
 		percentage: function() {
 			return Math.floor(this.$store.getters.loadedPercentage);
@@ -48,12 +43,14 @@ export default {
 		percentage: function(val) {
 			if(val == 100) {
 				this.$store.dispatch('hasLoaded');
-				if(!this.skip) {
+				if(!Config.gl.skipIntro) {
 					this.animateQuote();
 				} else {
-					this.$store.dispatch('updateWebglHome', 'cursorReady');
-					TweenLite.set(this.$el, {
-						display: 'none'
+					this.$nextTick(() => {
+						this.$store.dispatch('updateWebglHome', 'cursorReady');
+						TweenLite.set(this.$el, {
+							display: 'none'
+						});
 					});
 				}
 			}

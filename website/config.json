@@ -9,5 +9,12 @@
 		"url": "https://spill.net",
 		"slug": "spill",
 		"main_analytics": "UA-00000000-0"
+	},
+	"gl": {
+		"gui" : true,
+		"controls" : false,
+		"materialize" : false,
+		"dev": true,
+		"skipIntro": true
 	}
 }

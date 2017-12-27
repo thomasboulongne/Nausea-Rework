@@ -1,13 +1,15 @@
 <template>
 	<section class="container">
 		<loadingComp></loadingComp>
-		<homeComp v-if="$store.getters.loaded"></homeComp>
+		<homeComp v-if="loaded && $store.getters.home != 'closed'"></homeComp>
+		<expComp v-else-if="$store.getters.home == 'closed'"></expComp>
 	</section>
 </template>
 
 <script>
 import loadingComp from '~/components/Loading';
 import homeComp from '~/components/Home';
+import expComp from '~/components/Exp';
 
 export default {
 	computed: {
@@ -26,13 +28,14 @@ export default {
 
 	methods: {
 		goToExperience() {
-			console.log('goToExperience');
+			this.$store.dispatch('updateWebglHome', 'closed');
 		}
 	},
 
 	components: {
 		loadingComp,
-		homeComp
+		homeComp,
+		expComp
 	}
 };
 
