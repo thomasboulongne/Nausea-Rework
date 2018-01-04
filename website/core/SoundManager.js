@@ -1,10 +1,6 @@
 import Howler from 'howler';
 
 class Manager {
-
-	/**
-	 * @constructor
-	 */
 	constructor() {
 		let soundsToLoad = [
 			{
@@ -280,12 +276,6 @@ class Manager {
 		}
 	}
 
-	/**
-	 * @method
-	 * @name add
-	 * @description Add a child to the scene
-	 * @param {object} child - A THREE object
-	 */
 	load(name, options = {}) {
 		let sound = new Howler.Howl({
 			src: ['sound/' + name + '.mp3'],

@@ -1,21 +1,27 @@
 <template>
 	<div>
 		<div class="webgl" ref="webgl"></div>
+		<tooltipComp></tooltipComp>
+		<div class="chapter" ref="chapter">
+			<div class="counter" ref="counter">Chap. {{chapterNumber}}/IV</div>
+			<div class="name" ref="name">{{chapterName}}</div>
+		</div>
 	</div>
 </template>
 
 <script>
 
 import Scene from '~/webgl/ExperienceScene';
+import tooltipComp from '~/components/Tooltip';
 
 export default {
-	data() {
-		return {
-			obj: true
-		};
-	},
-
-	watch: {
+	computed: {
+		chapterNumber: function() {
+			return this.$store.getters.exp.chapter.number;
+		},
+		chapterName: function() {
+			return this.$store.getters.exp.chapter.name;
+		}
 	},
 
 	mounted() {
@@ -28,14 +34,14 @@ export default {
 		this.scene.destructor();
 	},
 
-	methods: {
+	components: {
+		tooltipComp
 	}
 };
 
 </script>
 
 <style lang="scss">
-
 canvas {
 	position: absolute;
 	top: 0;

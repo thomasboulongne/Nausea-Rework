@@ -1,8 +1,8 @@
 <template>
 	<section class="container">
 		<loadingComp></loadingComp>
-		<homeComp v-if="loaded && $store.getters.home != 'closed'"></homeComp>
-		<expComp v-else-if="$store.getters.home == 'closed'"></expComp>
+		<homeComp v-if="loaded && $store.getters.home.displayed"></homeComp>
+		<expComp v-else-if="$store.getters.exp.displayed"></expComp>
 	</section>
 </template>
 
@@ -19,8 +19,8 @@ export default {
 	},
 
 	watch: {
-		'$store.getters.home': function(val) {
-			if(val == 'goToExperience') {
+		'$store.getters.home.state': function(val) {
+			if(val == 'afterLeave') {
 				this.goToExperience();
 			}
 		}
@@ -28,7 +28,7 @@ export default {
 
 	methods: {
 		goToExperience() {
-			this.$store.dispatch('updateWebglHome', 'closed');
+			this.$store.dispatch('updateWebglExpDisplay', true);
 		}
 	},
 

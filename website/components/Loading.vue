@@ -40,14 +40,13 @@ export default {
 	},
 
 	watch: {
-		percentage: function(val) {
-			if(val == 100) {
-				this.$store.dispatch('hasLoaded');
+		'$store.getters.loaded': function(val) {
+			if(val == true) {
 				if(!Config.gl.skipIntro) {
 					this.animateQuote();
 				} else {
 					this.$nextTick(() => {
-						this.$store.dispatch('updateWebglHome', 'cursorReady');
+						this.$store.dispatch('enableHomeCursor');
 						TweenLite.set(this.$el, {
 							display: 'none'
 						});
@@ -66,7 +65,7 @@ export default {
 					tlOut.to(this.$refs.quote, 2, {
 						opacity: 0,
 						onComplete: () => {
-							this.$store.dispatch('updateWebglHome', 'cursorReady');
+							this.$store.dispatch('enableHomeCursor');
 							TweenLite.set(this.$el, {
 								display: 'none'
 							});

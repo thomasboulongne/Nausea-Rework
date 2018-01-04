@@ -225,13 +225,14 @@ class HomeScene {
 			this.onResize();
 		});
 
-		this.Store.watch((state, getters) => { return getters.webglCursor; }, () => {
-			this.onClick();
+		this.Store.watch((state, getters) => { return getters.home.state; }, state => {
+			if(state == 'beforeLeave') {
+				this.exit();
+			}
 		});
 
-		this.Store.watch((state, getters) => { return getters.home; }, val => {
-			console.log(val);
-			if(val == 'cursorReady') {
+		this.Store.watch((state, getters) => { return getters.home.cursor.enabled; }, cursor => {
+			if(cursor) {
 				this.cursor = new WebglCursor(this.domElement, this.Store);
 				this.enter();
 				this.startRaycast = true;
@@ -284,7 +285,8 @@ class HomeScene {
 		if(!this.in && this.cursor) {
 			this.cursor.onMouseEnter()
 			.then(() => {
-				this.Store.dispatch('updateWebglCursor');
+				this.Store.dispatch('updateWebglHomeState', 'beforeLeave');
+				this.Store.dispatch('updateWebglExpDisplay', true);
 			})
 			.catch(() => {
 			});
@@ -296,12 +298,6 @@ class HomeScene {
 		this.in = false;
 		if(this.cursor) {
 			this.cursor.onMouseLeave();
-		}
-	}
-
-	onClick() {
-		if(this.INTERSECTED) {
-			this.exit();
 		}
 	}
 
@@ -325,7 +321,7 @@ class HomeScene {
 				this.boundMouseMove = event => this.updateCameraPosition(event);
 				window.addEventListener('mousemove', this.boundMouseMove);
 				this.endStartAnimation = true;
-				this.Store.dispatch('updateWebglHome', 'endEnter');
+				this.Store.dispatch('updateWebglHomeState', 'afterEnter');
 			}
 		}, '-=0.5');
 	}
@@ -342,7 +338,8 @@ class HomeScene {
 				z: 0.2,
 				ease: Power4.easeIn,
 				onComplete: () => {
-					this.Store.dispatch('goToExperience');
+					this.Store.dispatch('updateWebglHomeState', 'afterLeave');
+					this.Store.dispatch('updateWebglHomeDisplay', false);
 				}
 			}, 0)
 			.to(this.center, exitTime, {

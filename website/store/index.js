@@ -17,8 +17,34 @@ const store = () => new Vuex.Store({
 		},
 
 		WebGL: {
-			cursor: 0,
-			home: true
+			home: {
+				displayed: true,
+				cursor: {
+					enabled: false,
+					completed: false
+				},
+				state: 'beforeEnter'
+			},
+			exp: {
+				displayed: false,
+				cursor: {
+					enabled: false,
+					completed: false
+				},
+				tooltip: {
+					displayed: false,
+					text: 'Placez votre curseur sur un élément pour le matérialiser.',
+					img: '/images/tip2.gif'
+				},
+				chapter: {
+					number: '',
+					name: ''
+				},
+				raycast: {
+					enabled: false
+				},
+				state: 'beforeIntro'
+			}
 		},
 
 		toLoadTotal: 0,
@@ -58,11 +84,26 @@ const store = () => new Vuex.Store({
 		ADD_TRANSLATION(state, translation) {
 			state.translations.push(translation);
 		},
-		UPDATE_WEBGL_CURSOR(state) {
-			state.WebGL.cursor = new Date().getTime();
+		ENABLE_HOME_CURSOR(state) {
+			state.WebGL.home.cursor.enabled = true;
 		},
-		UPDATE_WEBGL_HOME(state, homeState) {
-			state.WebGL.home = homeState;
+		UPDATE_WEBGL_HOME_STATE(state, homeState) {
+			state.WebGL.home.state = homeState;
+		},
+		UPDATE_WEBGL_HOME_DISPLAY(state, displayed) {
+			state.WebGL.home.displayed = displayed;
+		},
+		UPDATE_WEBGL_EXP_STATE(state, expState) {
+			state.WebGL.exp.state = expState;
+		},
+		UPDATE_WEBGL_EXP_DISPLAY(state, displayed) {
+			state.WebGL.exp.displayed = displayed;
+		},
+		UPDATE_RAYCAST_ENABLE(state, enabled) {
+			state.WebGL.exp.raycast.enabled = enabled;
+		},
+		UPDATE_EXP_TOOLTIP(state, displayed) {
+			state.WebGL.exp.tooltip.displayed = displayed;
 		}
 	},
 
@@ -82,8 +123,14 @@ const store = () => new Vuex.Store({
 		setToLoadTotal({ commit }, number) {
 			commit('SET_TO_LOAD_TOTAL', number);
 		},
-		updateLoadedCount({ commit }, count) {
+		updateLoadedCount({ commit, dispatch }, count) {
 			commit('UPDATE_LOADED_COUNT', count);
+			dispatch('checkIfFullyLoaded');
+		},
+		checkIfFullyLoaded({ dispatch, state }) {
+			if(state.toLoadTotal == state.loadedCount) {
+				dispatch('hasLoaded');
+			}
 		},
 		hasLoaded({ commit }) {
 			commit('CONTENT_LOADED');
@@ -94,14 +141,32 @@ const store = () => new Vuex.Store({
 		setLang({ commit }, lang) {
 			commit('SET_LANG', lang);
 		},
-		updateWebglCursor({ commit }) {
-			commit('UPDATE_WEBGL_CURSOR');
+		enableHomeCursor({ commit }) {
+			commit('ENABLE_HOME_CURSOR');
 		},
-		updateWebglHome({ commit }, homeState) {
-			commit('UPDATE_WEBGL_HOME', homeState);
+		updateWebglHomeState({ commit }, homeState) {
+			commit('UPDATE_WEBGL_HOME_STATE', homeState);
 		},
-		goToExperience({ commit }) {
-			commit('UPDATE_WEBGL_HOME', 'goToExperience');
+		updateWebglHomeDisplay({ commit }, displayed) {
+			commit('UPDATE_WEBGL_HOME_DISPLAY', displayed);
+		},
+		updateWebglExpState({ commit }, expState) {
+			commit('UPDATE_WEBGL_EXP_STATE', expState);
+		},
+		updateWebglExpDisplay({ commit }, displayed) {
+			commit('UPDATE_WEBGL_EXP_DISPLAY', displayed);
+		},
+		showExpTooltip({ commit }) {
+			commit('UPDATE_EXP_TOOLTIP', true);
+		},
+		hideExpTooltip({ commit }) {
+			commit('HIDE_EXP_TOOLTIP', false);
+		},
+		enableRaycast({ commit }) {
+			commit('UPDATE_RAYCAST_ENABLE', true);
+		},
+		disableRaycast({ commit }) {
+			commit('UPDATE_RAYCAST_ENABLE', false);
 		}
 	},
 
@@ -115,8 +180,8 @@ const store = () => new Vuex.Store({
 			return state.translations.find(t => t.identifier == identifier) ? state.translations.find(t => t.identifier == identifier).translations : identifier;
 		},
 		lang: state => state.uiData.lang,
-		webglCursor: state => state.WebGL.cursor,
 		home: state => state.WebGL.home,
+		exp: state => state.WebGL.exp,
 		objects: state => state.objects,
 		object: state => name => {
 			return state.objects[name];

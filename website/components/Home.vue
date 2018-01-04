@@ -17,8 +17,8 @@ export default {
 	},
 
 	watch: {
-		'$store.getters.home': function(val) {
-			if(val == 'endEnter') {
+		'$store.getters.home.state': function(val) {
+			if(val == 'afterEnter') {
 				this.showTooltip();
 			}
 		}

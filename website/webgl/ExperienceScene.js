@@ -161,39 +161,39 @@ class ExperienceScene {
 			this.field.load(),
 			this.particles.load()
 		])
+		.then(() => {
+			this.scene.background = this.whiteSkybox.texture;
+			this.add(this.field.mesh);
+			this.add(this.particles.mesh);
+
+			this.zones = [
+				new Zone0(this.Store),
+				new Zone1(this.Store, { x: [882, 1059], y: [541, 674] }, this.controlsContainer, {strength: 0.0025}, 1, 'Le Maronnier', '03'),
+				new Zone2(this.Store, { x: [1407, 1640], y: [555, 696] }, this.controlsContainer, {strength: 0.0025}, 2, 'Le Kiosque', '06'),
+				new Zone3(this.Store, { x: [132, 252], y: [553, 677] }, this.controlsContainer, {strength: 0.0025}, 3, 'La Statue', '05'),
+				new Zone4(this.Store, { x: [459, 552], y: [592, 677] }, this.controlsContainer, {strength: 0.0025}, 4, 'La Fontaine', '07')
+			];
+
+			Promise.all([
+				this.zones[0].init(),
+				this.zones[1].init(),
+				this.zones[2].init(),
+				this.zones[3].init(),
+				this.zones[4].init()
+			])
 			.then(() => {
-				this.scene.background = this.whiteSkybox.texture;
-				this.add(this.field.mesh);
-				this.add(this.particles.mesh);
+				for (let i = 0; i < this.zones.length; i++) {
+					for (let j = 0; j < this.zones[i].objects.length; j++) {
+						this.add(this.zones[i].objects[j].mesh);
+					}
+					this.zones[i].initTimeline();
+				}
 
-				this.zones = [
-					new Zone0(this.Store),
-					new Zone1(this.Store, { x: [882, 1059], y: [541, 674] }, this.controlsContainer, {strength: 0.0025}, 1, 'Le Maronnier', '03'),
-					new Zone2(this.Store, { x: [1407, 1640], y: [555, 696] }, this.controlsContainer, {strength: 0.0025}, 2, 'Le Kiosque', '06'),
-					new Zone3(this.Store, { x: [132, 252], y: [553, 677] }, this.controlsContainer, {strength: 0.0025}, 3, 'La Statue', '05'),
-					new Zone4(this.Store, { x: [459, 552], y: [592, 677] }, this.controlsContainer, {strength: 0.0025}, 4, 'La Fontaine', '07')
-				];
+				// Emitter.on('ZONE_FOCUSED', this.startZoneAnimation.bind(this));
 
-				Promise.all([
-					this.zones[0].init(),
-					this.zones[1].init(),
-					this.zones[2].init(),
-					this.zones[3].init(),
-					this.zones[4].init()
-				])
-					.then(() => {
-						for (let i = 0; i < this.zones.length; i++) {
-							for (let j = 0; j < this.zones[i].objects.length; j++) {
-								this.add(this.zones[i].objects[j].mesh);
-							}
-							this.zones[i].initTimeline();
-						}
-
-						// Emitter.on('ZONE_FOCUSED', this.startZoneAnimation.bind(this));
-
-						this.intro();
-					});
+				this.intro();
 			});
+		});
 
 
 		this.videos = [];
@@ -233,59 +233,58 @@ class ExperienceScene {
 		let cameraTl = new TimelineLite();
 
 		cameraTl
-			.add(() => {
-				SoundManager.play('02');
-			}, '+=4')
-			// .to(this.passes[1].params, 4, {
-			// 	delay: 2,
-			// 	boost: 1
-			// })
-			.to(this.controls.pitchObject.rotation, 10, {
-				x: 0.1,
-				ease: Power1.easeInOut,
-				onComplete: () => {
-					this.controls.enabled = true;
-					this.enabledRaycast = true;
-					this.cursor = new WebglCursor(this.domElement, 'ZONE_FOCUSED', { color: '#4a4a4a' });
-					// Emitter.emit('SHOW_TT', 1);
-				}
-			}, '-=2')
-			.add(() => {
-				// Emitter.emit('INTRO_END');
-			}, '-=1.5');
+		.add(() => {
+			SoundManager.play('02');
+		}, '+=4')
+		// .to(this.passes[1].params, 4, {
+		// 	delay: 2,
+		// 	boost: 1
+		// })
+		.to(this.controls.pitchObject.rotation, 10, {
+			x: 0.1,
+			ease: Power1.easeInOut,
+			onComplete: () => {
+				this.controls.enabled = true;
+				this.enabledRaycast = true;
+				this.cursor = new WebglCursor(this.domElement, { color: '#4a4a4a' });
+				this.Store.dispatch('showExpTooltip');
+			}
+		}, '-=2')
+		.add(() => {
+			this.Store.dispatch('updateWebglExpState', 'afterIntro');
+		}, '-=1.5');
 
 		this.zones[0].rootsTl.play();
 	}
 
 	outro() {
-		// launch
 		let tl = new TimelineMax();
 
 		tl.add(() => {
 			this.endLights = true;
 		}, '2')
-			// .to(this.passes[2].params, 20, {
-			// 	strength: 0.2
-			// }, '3')
-			.to(this.camera, 20, {
-				fov: 20
-			}, '3')
-			.add(() => {
-				SoundManager.play('10');
-			}, '3')
-			.add(() => {
-				SoundManager.play('16');
-			}, '22')
-			.add(() => {
-				SoundManager.play('11');
-			}, '41')
-			.add(() => {
-				SoundManager.play('13');
-			}, '46')
-			.add(() => {
-				// Emitter.emit('END_SCREEN');
-				this.scene.background = this.blackSkybox.texture;
-			}, '46');
+		// .to(this.passes[2].params, 20, {
+		// 	strength: 0.2
+		// }, '3')
+		.to(this.camera, 20, {
+			fov: 20
+		}, '3')
+		.add(() => {
+			SoundManager.play('10');
+		}, '3')
+		.add(() => {
+			SoundManager.play('16');
+		}, '22')
+		.add(() => {
+			SoundManager.play('11');
+		}, '41')
+		.add(() => {
+			SoundManager.play('13');
+		}, '46')
+		.add(() => {
+			// Emitter.emit('END_SCREEN');
+			this.scene.background = this.blackSkybox.texture;
+		}, '46');
 	}
 
 	addEventListeners() {
@@ -293,8 +292,10 @@ class ExperienceScene {
 		TweenMax.ticker.addEventListener('tick', this.render.bind(this));
 		// Emitter.on('ENTER_ZONE', this.onEnterZone.bind(this));
 		// Emitter.on('LEAVE_ZONE', this.onLeaveZone.bind(this));
-		// Emitter.on('DISABLE_RAYCAST', () => { this.enabledRaycast = false; });
-		// Emitter.on('ENABLE_RAYCAST', () => { this.enabledRaycast = true; });
+
+		this.Store.watch((state, getters) => { return getters.exp.raycast.enabled; }, enabled => {
+			this.enabledRaycast = enabled;
+		});
 
 		window.addEventListener('keydown', this.toggleCamera.bind(this));
 	}
@@ -391,7 +392,7 @@ class ExperienceScene {
 				if(this.INTERSECTED == null) {
 					this.intersect.startHoverAnimation();
 					this.cursor.onMouseEnter();
-					// setTimeout(() => Emitter.emit('HIDE_TT', 1), 500);
+					setTimeout(() => this.Store.dispatch('hideExpTooltip'), 500);
 				}
 			} else {
 				if(this.INTERSECTED != null) {
