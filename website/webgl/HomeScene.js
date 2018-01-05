@@ -21,9 +21,6 @@ import { throttle } from 'lodash';
 import ModelObject from './objects/ModelObject';
 
 class HomeScene {
-	/**
-	 * @constructor
-	 */
 	constructor(domElement, Store) {
 		this.domElement = domElement;
 		this.Store = Store;
@@ -89,29 +86,14 @@ class HomeScene {
 		this.scene = null;
 	}
 
-	/**
-	 * @method
-	 * @name add
-	 * @description Add a child to the scene
-	 * @param {object} child - A THREE object
-	 */
 	add(child) {
 		this.scene.add(child);
 	}
 
-	/**
-	 * @method
-	 * @name remove
-	 * @description Remove a child from the scene
-	 * @param {object} child - A THREE object
-	 */
 	remove(child) {
 		this.scene.remove(child);
 	}
 
-	/**
-	 * Setup the scene lights
-	 */
 	setLights() {
 		this.lights = new Lights();
 		for (let i = 0; i < this.lights.list.length; i++) {
@@ -124,9 +106,6 @@ class HomeScene {
 		}
 	}
 
-	/**
-	 * Add the possprocess composer and the passes
-	 */
 	setComposer() {
 		this.composer = new EffectComposer(this.renderer);
 
@@ -173,16 +152,10 @@ class HomeScene {
 		this.setAmbiantSound();
 	}
 
-	/**
-	 * Create sound manager
-	 */
 	setAmbiantSound() {
 		SoundManager.play('atmos01');
 	}
 
-	/**
-	 * Create and load the 3d objects
-	 */
 	createObjects() {
 		this.field = new Field();
 
@@ -217,21 +190,18 @@ class HomeScene {
 		});
 	}
 
-	/**
-	 * Add all the listeners
-	 */
 	addEventListeners() {
-		this.Store.watch((state, getters) => { return getters.viewportSize; }, () => {
+		this.Store.watch((state, getters) => getters.viewportSize, () => {
 			this.onResize();
 		});
 
-		this.Store.watch((state, getters) => { return getters.home.state; }, state => {
+		this.Store.watch((state, getters) => getters.home.state, state => {
 			if(state == 'beforeLeave') {
 				this.exit();
 			}
 		});
 
-		this.Store.watch((state, getters) => { return getters.home.cursor.enabled; }, cursor => {
+		this.Store.watch((state, getters) => getters.home.cursor.enabled, cursor => {
 			if(cursor) {
 				this.cursor = new WebglCursor(this.domElement, this.Store);
 				this.enter();
@@ -239,17 +209,22 @@ class HomeScene {
 			}
 		});
 
+		this.Store.watch((state, getters) => getters.home.cursor.animated, animated => {
+			if(animated) {
+				this.onMouseEnter();
+			} else {
+				this.onMouseLeave();
+			}
+		});
+
 		this.bindRender = this.render.bind(this);
 		TweenMax.ticker.addEventListener('tick', this.bindRender);
 
-		this.Store.watch((state, getters) => { return getters.loaded; }, () => {
+		this.Store.watch((state, getters) => getters.loaded, () => {
 			this.enter();
 		});
 	}
 
-	/**
-	 * remove all the listeners
-	 */
 	removeEventListeners() {
 		TweenMax.ticker.removeEventListener('tick', this.bindRender);
 		window.removeEventListener('mousemove', this.boundMouseMove);
@@ -259,10 +234,6 @@ class HomeScene {
 		this.controls.enabled = !this.controls.enabled;
 	}
 
-	/**
-	 * Handle the camera position based on mouseMove event
-	 * @param  {DOM Event} event Return of mouseMove event
-	 */
 	updateCameraPosition(event) {
 		throttle(() => {
 			this.mouseRaycast.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -301,9 +272,6 @@ class HomeScene {
 		}
 	}
 
-	/**
-	 * Triggered when all objects are loaded - Start entry camera move
-	 */
 	enter() {
 		let tl = new TimelineLite();
 		tl.to(this.camera.position, 2, {
@@ -358,11 +326,6 @@ class HomeScene {
 		this.exitFlag = true;
 	}
 
-	/**
-	 * @method
-	 * @name render
-	 * @description Renders/Draw the scene
-	 */
 	render() {
 		this.homeLights.update();
 
@@ -383,12 +346,12 @@ class HomeScene {
 
 			if(intersects.length == 0) {
 				if(this.INTERSECTED) {
-					this.onMouseLeave();
+					this.Store.dispatch('endHomeCursorAnimation');
 				}
 				this.INTERSECTED = false;
 			} else {
 				if(!this.INTERSECTED) {
-					this.onMouseEnter();
+					this.Store.dispatch('startHomeCursorAnimation');
 				}
 				this.enableHoverSound = true;
 				this.INTERSECTED = true;
@@ -397,13 +360,6 @@ class HomeScene {
 		this.composer.render(this.clock.getDelta());
 	}
 
-	/**
-	 * @method
-	 * @name onResize
-	 * @description Resize the scene according to screen size
-	 * @param {number} newWidth
-	 * @param {number} newHeight
-	 */
 	onResize() {
 		this.halfWidth = this.width / 2;
 		this.halfHeight = this.height / 2;

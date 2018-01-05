@@ -21,6 +21,7 @@ const store = () => new Vuex.Store({
 				displayed: true,
 				cursor: {
 					enabled: false,
+					animated: false,
 					completed: false
 				},
 				state: 'beforeEnter'
@@ -29,6 +30,7 @@ const store = () => new Vuex.Store({
 				displayed: false,
 				cursor: {
 					enabled: false,
+					animated: false,
 					completed: false
 				},
 				tooltip: {
@@ -41,7 +43,8 @@ const store = () => new Vuex.Store({
 					name: ''
 				},
 				raycast: {
-					enabled: false
+					enabled: false,
+					zone: null
 				},
 				state: 'beforeIntro'
 			}
@@ -93,6 +96,9 @@ const store = () => new Vuex.Store({
 		UPDATE_WEBGL_HOME_DISPLAY(state, displayed) {
 			state.WebGL.home.displayed = displayed;
 		},
+		UPDATE_HOME_CURSOR_ANIMATED(state, animated) {
+			state.WebGL.home.cursor.animated = animated;
+		},
 		UPDATE_WEBGL_EXP_STATE(state, expState) {
 			state.WebGL.exp.state = expState;
 		},
@@ -102,8 +108,14 @@ const store = () => new Vuex.Store({
 		UPDATE_RAYCAST_ENABLE(state, enabled) {
 			state.WebGL.exp.raycast.enabled = enabled;
 		},
+		UPDATE_RAYCAST_ZONE(state, number) {
+			state.WebGL.exp.raycast.zone = number;
+		},
 		UPDATE_EXP_TOOLTIP(state, displayed) {
 			state.WebGL.exp.tooltip.displayed = displayed;
+		},
+		UPDATE_EXP_CURSOR_ANIMATED(state, animated) {
+			state.WebGL.exp.cursor.animated = animated;
 		}
 	},
 
@@ -150,6 +162,12 @@ const store = () => new Vuex.Store({
 		updateWebglHomeDisplay({ commit }, displayed) {
 			commit('UPDATE_WEBGL_HOME_DISPLAY', displayed);
 		},
+		startHomeCursorAnimation({ commit }) {
+			commit('UPDATE_HOME_CURSOR_ANIMATED', true);
+		},
+		endHomeCursorAnimation({ commit }) {
+			commit('UPDATE_HOME_CURSOR_ANIMATED', false);
+		},
 		updateWebglExpState({ commit }, expState) {
 			commit('UPDATE_WEBGL_EXP_STATE', expState);
 		},
@@ -160,13 +178,25 @@ const store = () => new Vuex.Store({
 			commit('UPDATE_EXP_TOOLTIP', true);
 		},
 		hideExpTooltip({ commit }) {
-			commit('HIDE_EXP_TOOLTIP', false);
+			commit('UPDATE_EXP_TOOLTIP', false);
 		},
 		enableRaycast({ commit }) {
 			commit('UPDATE_RAYCAST_ENABLE', true);
 		},
 		disableRaycast({ commit }) {
 			commit('UPDATE_RAYCAST_ENABLE', false);
+		},
+		updateRaycastZone({ commit, dispatch, getters }, number) {
+			if(number != getters.exp.raycast.zone) {
+				dispatch('startExpCursorAnimation');
+			}
+			commit('UPDATE_RAYCAST_ZONE', number);
+		},
+		startExpCursorAnimation({ commit }) {
+			commit('UPDATE_EXP_CURSOR_ANIMATED', true);
+		},
+		endExpCursorAnimation({ commit }) {
+			commit('UPDATE_EXP_CURSOR_ANIMATED', false);
 		}
 	},
 

@@ -21,10 +21,6 @@ import Zone3 from './zones/Zone3';
 import Zone4 from './zones/Zone4';
 
 class ExperienceScene {
-
-	/**
-	 * @constructor
-	 */
 	constructor(domElement, Store) {
 		if(Config.gl.gui) {
 			const Dat = require('dat-gui');
@@ -55,7 +51,7 @@ class ExperienceScene {
 		this.scene.fog = new THREE.FogExp2(0xffffff, 0.08);
 		if(Config.gl.gui) this.gui.add(this.scene.fog, 'density', 0, 0.2).name('fog');
 
-		this.enabledRaycast = false;
+		this.Store.dispatch('disableRaycast');
 
 		this.doneZonesNumber = 0;
 
@@ -72,22 +68,10 @@ class ExperienceScene {
 		this.addEventListeners();
 	}
 
-	/**
-	 * @method
-	 * @name add
-	 * @description Add a child to the scene
-	 * @param {object} child - A THREE object
-	 */
 	add(child) {
 		this.scene.add(child);
 	}
 
-	/**
-	 * @method
-	 * @name remove
-	 * @description Remove a child from the scene
-	 * @param {object} child - A THREE object
-	 */
 	remove(child) {
 		this.scene.remove(child);
 	}
@@ -189,8 +173,6 @@ class ExperienceScene {
 					this.zones[i].initTimeline();
 				}
 
-				// Emitter.on('ZONE_FOCUSED', this.startZoneAnimation.bind(this));
-
 				this.intro();
 			});
 		});
@@ -245,7 +227,7 @@ class ExperienceScene {
 			ease: Power1.easeInOut,
 			onComplete: () => {
 				this.controls.enabled = true;
-				this.enabledRaycast = true;
+				this.Store.dispatch('enableRaycast');
 				this.cursor = new WebglCursor(this.domElement, { color: '#4a4a4a' });
 				this.Store.dispatch('showExpTooltip');
 			}
@@ -292,9 +274,20 @@ class ExperienceScene {
 		TweenMax.ticker.addEventListener('tick', this.render.bind(this));
 		// Emitter.on('ENTER_ZONE', this.onEnterZone.bind(this));
 		// Emitter.on('LEAVE_ZONE', this.onLeaveZone.bind(this));
+		this.Store.watch((state, getters) => getters.exp.cursor.animated, animated => {
+			if(animated) {
+				this.cursor.onMouseEnter();
+			} else {
+				this.cursor.onMouseLeave();
+			}
+		});
 
-		this.Store.watch((state, getters) => { return getters.exp.raycast.enabled; }, enabled => {
-			this.enabledRaycast = enabled;
+		this.Store.watch((state, getters) => getters.exp.raycast.zone, zoneNumber => {
+			if(zoneNumber != null && this.Store.getters.exp.raycast.enabled) {
+				setTimeout(() => this.Store.dispatch('hideExpTooltip'), 500);
+			} else {
+				this.Store.dispatch('endExpCursorAnimation');
+			}
 		});
 
 		window.addEventListener('keydown', this.toggleCamera.bind(this));
@@ -347,7 +340,7 @@ class ExperienceScene {
 		}
 
 		TweenMax.to(this.scene.fog, 1, { density: 0.08 });
-		this.enabledRaycast = true;
+		this.Store.dispatch('enableRaycast');
 
 		switch(idZone) {
 			case 1:
@@ -366,44 +359,26 @@ class ExperienceScene {
 		}
 	}
 
-	/**
-	 * @method
-	 * @name render
-	 * @description Renders/Draw the scene
-	 */
 	render() {
 		if(this.zones) {
-			this.intersect = null;
-
+			let mouse = this.controls.mouse;
+			let raycastedZone = null;
 			for (let i = 0; i < this.zones.length; i++) {
 				let zone = this.zones[i];
-				zone.update();
-				let mouse = this.controls.mouse;
 
-				if(mouse.x > window.innerWidth * zone.orientation.x[0] / 1706 &&
+				zone.update();
+
+				if(
+					mouse.x > window.innerWidth * zone.orientation.x[0] / 1706 &&
 					mouse.x < window.innerWidth * zone.orientation.x[1] / 1706 &&
 					mouse.y > window.innerHeight * zone.orientation.y[0] / 1299 &&
-					mouse.y < window.innerHeight * zone.orientation.y[1] / 1299 &&
-					!zone.animated) {
-					this.intersect = zone;
+					mouse.y < window.innerHeight * zone.orientation.y[1] / 1299
+				) {
+					raycastedZone = i;
 				}
 			}
-			if(this.intersect != null && this.enabledRaycast) {
-				if(this.INTERSECTED == null) {
-					this.intersect.startHoverAnimation();
-					this.cursor.onMouseEnter();
-					setTimeout(() => this.Store.dispatch('hideExpTooltip'), 500);
-				}
-			} else {
-				if(this.INTERSECTED != null) {
-					this.cursor.onMouseLeave();
 
-					if(!this.INTERSECTED.animated) {
-						this.INTERSECTED.endHoverAnimation();
-					}
-				}
-			}
-			this.INTERSECTED = this.intersect;
+			this.Store.dispatch('updateRaycastZone', raycastedZone);
 		}
 
 		this.renderer.autoClearColor = true;
@@ -415,13 +390,6 @@ class ExperienceScene {
 		}
 	}
 
-	/**
-	 * @method
-	 * @name onResize
-	 * @description Resize the scene according to screen size
-	 * @param {number} newWidth
-	 * @param {number} newHeight
-	 */
 	onResize() {
 		this.width = window.innerWidth;
 		this.height = window.innerHeight;
