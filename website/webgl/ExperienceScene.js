@@ -274,12 +274,12 @@ class ExperienceScene {
 		TweenMax.ticker.addEventListener('tick', this.render.bind(this));
 		// Emitter.on('ENTER_ZONE', this.onEnterZone.bind(this));
 		// Emitter.on('LEAVE_ZONE', this.onLeaveZone.bind(this));
-		this.Store.watch((state, getters) => getters.exp.cursor.animated, animated => {
-			if(animated) {
-				this.cursor.onMouseEnter();
-			} else {
-				this.cursor.onMouseLeave();
-			}
+		this.Store.watch((state, getters) => getters.exp.cursor.animated, () => {
+			// if(animated) {
+			// 	this.cursor.onMouseEnter();
+			// } else {
+			// 	this.cursor.onMouseLeave();
+			// }
 		});
 
 		this.Store.watch((state, getters) => getters.exp.raycast.zone, zoneNumber => {
