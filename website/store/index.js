@@ -28,6 +28,7 @@ const store = () => new Vuex.Store({
 			},
 			exp: {
 				displayed: false,
+				animated: null,
 				cursor: {
 					enabled: false,
 					animated: false,
@@ -38,10 +39,7 @@ const store = () => new Vuex.Store({
 					text: 'Placez votre curseur sur un élément pour le matérialiser.',
 					img: '/images/tip2.gif'
 				},
-				chapter: {
-					number: '',
-					name: ''
-				},
+				zones: [],
 				raycast: {
 					enabled: false,
 					zone: null
@@ -96,6 +94,14 @@ const store = () => new Vuex.Store({
 		UPDATE_WEBGL_HOME_DISPLAY(state, displayed) {
 			state.WebGL.home.displayed = displayed;
 		},
+		ADD_ZONE(state, {zoneName, zoneNumber}) {
+			state.WebGL.exp.zones.push({
+				number: zoneNumber,
+				name: zoneName,
+				displayed: false,
+				animated: false
+			});
+		},
 		UPDATE_HOME_CURSOR_ANIMATED(state, animated) {
 			state.WebGL.home.cursor.animated = animated;
 		},
@@ -116,6 +122,11 @@ const store = () => new Vuex.Store({
 		},
 		UPDATE_EXP_CURSOR_ANIMATED(state, animated) {
 			state.WebGL.exp.cursor.animated = animated;
+		},
+		START_ZONE_ANIMATION(state, zoneNumber) {
+			state.WebGL.exp.animated = zoneNumber;
+			console.log('zoneNumber', zoneNumber);
+			state.WebGL.exp.zones[zoneNumber].animated = true;
 		}
 	},
 
@@ -168,6 +179,9 @@ const store = () => new Vuex.Store({
 		endHomeCursorAnimation({ commit }) {
 			commit('UPDATE_HOME_CURSOR_ANIMATED', false);
 		},
+		addZone({ commit }, {name, number}) {
+			commit('ADD_ZONE', {name: name, number: number});
+		},
 		updateWebglExpState({ commit }, expState) {
 			commit('UPDATE_WEBGL_EXP_STATE', expState);
 		},
@@ -197,6 +211,14 @@ const store = () => new Vuex.Store({
 		},
 		endExpCursorAnimation({ commit }) {
 			commit('UPDATE_EXP_CURSOR_ANIMATED', false);
+		},
+		startZoneAnimation({commit}, zoneNumber) {
+			commit('START_ZONE_ANIMATION', zoneNumber);
+			commit('UPDATE_RAYCAST_ENABLE', false);
+		},
+		endZoneAnimation({ commit }, zoneNumber) {
+			commit('START_ZONE_ANIMATION', zoneNumber);
+			commit('UPDATE_RAYCAST_ENABLE', false);
 		}
 	},
 

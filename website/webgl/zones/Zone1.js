@@ -68,7 +68,6 @@ class Zone1 extends Zone {
 				}))
 			];
 
-			console.log(this.soundId);
 			SoundManager.get(this.soundId).volume(3);
 
 			this.datas = new DataEmitter(this.controlsContainer, ['chest1', 'chest2', 'chest3'], {

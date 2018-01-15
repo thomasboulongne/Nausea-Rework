@@ -3,20 +3,12 @@ import SoundManager from '~/core/SoundManager';
 import * as NumberUtils from '../utils/NumberUtils';
 
 class Zone {
-
-	/**
-	 * @constructor
-	 * param [objects] : array of object
-	 * param scene : experience scene
-	 */
-	constructor(Store, orientation = { x: [0, 0], y: [0, 0] }, controlsContainer, zoomParams = {strength: 0.0025}, id, name, soundId) {
+	constructor(Store, orientation = { x: [0, 0], y: [0, 0] }, controlsContainer, zoomParams = {strength: 0.0025}, id, name, number, soundId) {
 		this.Store = Store;
 
 		this.controlsContainer = controlsContainer;
 		this.zoomParams = zoomParams;
 		this.id = id;
-
-		this.name = name;
 
 		this.soundId = soundId;
 
@@ -25,6 +17,9 @@ class Zone {
 		this.objects = [];
 
 		this.orientation = orientation;
+
+		this.number = number;
+		this.Store.dispatch('addZone', {name: name, number: number});
 	}
 
 	init(objs) {
@@ -72,9 +67,8 @@ class Zone {
 		this.timeline.play();
 	}
 
-	playAnim(zoneNumber) {
-		console.log(zoneNumber);
-		// Emitter.emit('ENTER_ZONE', this.name, zoneNumber);
+	playAnim() {
+		this.Store.dispatch('startZoneAnimation', this.number);
 		this.animated = true;
 		for (let i = 0; i < this.objects.length; i++) {
 			this.objects[i].material.transparent = false;
@@ -165,9 +159,6 @@ class Zone {
 		}
 	}
 
-	/**
-	 * @update
-	 */
 	update() {
 		if(this.animate) {
 			for (let i = 0; i < this.objects.length; i++) {

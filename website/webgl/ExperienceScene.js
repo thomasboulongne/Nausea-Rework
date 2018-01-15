@@ -38,8 +38,6 @@ class ExperienceScene {
 
 		this.scene = new THREE.Scene();
 
-		this.countZones = 0;
-
 		// this.add(new THREE.AxisHelper(8));
 
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -52,8 +50,6 @@ class ExperienceScene {
 		if(Config.gl.gui) this.gui.add(this.scene.fog, 'density', 0, 0.2).name('fog');
 
 		this.Store.dispatch('disableRaycast');
-
-		this.doneZonesNumber = 0;
 
 		this.setControls();
 
@@ -152,10 +148,10 @@ class ExperienceScene {
 
 			this.zones = [
 				new Zone0(this.Store),
-				new Zone1(this.Store, { x: [882, 1059], y: [541, 674] }, this.controlsContainer, {strength: 0.0025}, 1, 'Le Maronnier', '03'),
-				new Zone2(this.Store, { x: [1407, 1640], y: [555, 696] }, this.controlsContainer, {strength: 0.0025}, 2, 'Le Kiosque', '06'),
-				new Zone3(this.Store, { x: [132, 252], y: [553, 677] }, this.controlsContainer, {strength: 0.0025}, 3, 'La Statue', '05'),
-				new Zone4(this.Store, { x: [459, 552], y: [592, 677] }, this.controlsContainer, {strength: 0.0025}, 4, 'La Fontaine', '07')
+				new Zone1(this.Store, { x: [882, 1059], y: [541, 674] }, this.controlsContainer, {strength: 0.0025}, 1, 'Le Maronnier', 1, '03'),
+				new Zone2(this.Store, { x: [1407, 1640], y: [555, 696] }, this.controlsContainer, {strength: 0.0025}, 2, 'Le Kiosque', 2, '06'),
+				new Zone3(this.Store, { x: [132, 252], y: [553, 677] }, this.controlsContainer, {strength: 0.0025}, 3, 'La Statue', 3, '05'),
+				new Zone4(this.Store, { x: [459, 552], y: [592, 677] }, this.controlsContainer, {strength: 0.0025}, 4, 'La Fontaine', 4, '07')
 			];
 
 			Promise.all([
@@ -272,14 +268,16 @@ class ExperienceScene {
 	addEventListeners() {
 		window.addEventListener('resize', this.onResize.bind(this));
 		TweenMax.ticker.addEventListener('tick', this.render.bind(this));
-		// Emitter.on('ENTER_ZONE', this.onEnterZone.bind(this));
-		// Emitter.on('LEAVE_ZONE', this.onLeaveZone.bind(this));
-		this.Store.watch((state, getters) => getters.exp.cursor.animated, () => {
-			// if(animated) {
-			// 	this.cursor.onMouseEnter();
-			// } else {
-			// 	this.cursor.onMouseLeave();
-			// }
+		this.Store.watch((state, getters) => getters.exp.cursor.animated, animated => {
+			if(animated) {
+				this.cursor.onMouseEnter()
+				.then(() => {
+					this.onEnterZone();
+					this.zones[this.Store.getters.exp.raycast.zone].playAnim();
+				});
+			} else {
+				this.cursor.onMouseLeave();
+			}
 		});
 
 		this.Store.watch((state, getters) => getters.exp.raycast.zone, zoneNumber => {
@@ -301,13 +299,6 @@ class ExperienceScene {
 
 	addCanvasElement(domElt) {
 		this.canvasElement = domElt;
-	}
-
-	startZoneAnimation() {
-		if(this.INTERSECTED != null) {
-			this.doneZonesNumber++;
-			this.INTERSECTED.playAnim(this.doneZonesNumber);
-		}
 	}
 
 	onEnterZone() {
@@ -340,7 +331,6 @@ class ExperienceScene {
 		}
 
 		TweenMax.to(this.scene.fog, 1, { density: 0.08 });
-		this.Store.dispatch('enableRaycast');
 
 		switch(idZone) {
 			case 1:
