@@ -95,12 +95,13 @@ const store = () => new Vuex.Store({
 			state.WebGL.home.displayed = displayed;
 		},
 		ADD_ZONE(state, {zoneName, zoneNumber}) {
-			state.WebGL.exp.zones.push({
+			const zone = {
 				number: zoneNumber,
 				name: zoneName,
 				displayed: false,
 				animated: false
-			});
+			};
+			state.WebGL.exp.zones.push(zone);
 		},
 		UPDATE_HOME_CURSOR_ANIMATED(state, animated) {
 			state.WebGL.home.cursor.animated = animated;
@@ -125,8 +126,12 @@ const store = () => new Vuex.Store({
 		},
 		START_ZONE_ANIMATION(state, zoneNumber) {
 			state.WebGL.exp.animated = zoneNumber;
-			console.log('zoneNumber', zoneNumber);
-			state.WebGL.exp.zones[zoneNumber].animated = true;
+			state.WebGL.exp.zones.find(zone => zone.number == zoneNumber).animated = true;
+		},
+		END_ZONE_ANIMATION(state, zoneNumber) {
+			state.WebGL.exp.animated = null;
+			state.WebGL.exp.zones.find(zone => zone.number == zoneNumber).animated = true;
+			state.WebGL.exp.zones.find(zone => zone.number == zoneNumber).displayed = true;
 		}
 	},
 
@@ -180,7 +185,8 @@ const store = () => new Vuex.Store({
 			commit('UPDATE_HOME_CURSOR_ANIMATED', false);
 		},
 		addZone({ commit }, {name, number}) {
-			commit('ADD_ZONE', {name: name, number: number});
+			console.log('addZone', number, name);
+			commit('ADD_ZONE', {zoneName: name, zoneNumber: number});
 		},
 		updateWebglExpState({ commit }, expState) {
 			commit('UPDATE_WEBGL_EXP_STATE', expState);
@@ -217,7 +223,7 @@ const store = () => new Vuex.Store({
 			commit('UPDATE_RAYCAST_ENABLE', false);
 		},
 		endZoneAnimation({ commit }, zoneNumber) {
-			commit('START_ZONE_ANIMATION', zoneNumber);
+			commit('END_ZONE_ANIMATION', zoneNumber);
 			commit('UPDATE_RAYCAST_ENABLE', false);
 		}
 	},

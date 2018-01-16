@@ -58,7 +58,7 @@ class Zone {
 			time: 2,
 			ease: Circ.easeOut,
 			onComplete: () => {
-				this.animate = false;
+				this.Store.dispatch('endZoneAnimation', this.number);
 			}
 		}, '1');
 	}

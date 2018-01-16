@@ -274,6 +274,7 @@ class ExperienceScene {
 				.then(() => {
 					this.onEnterZone();
 					this.zones[this.Store.getters.exp.raycast.zone].playAnim();
+					this.Store.dispatch('endExpCursorAnimation');
 				});
 			} else {
 				this.cursor.onMouseLeave();
