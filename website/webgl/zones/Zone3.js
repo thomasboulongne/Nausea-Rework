@@ -15,7 +15,7 @@ class Zone3 extends Zone {
 	init() {
 		return new Promise(resolve => {
 			const objs = [
-				new ModelObject(this.Store.getters.object('statue', {
+				new ModelObject(this.Store.getters.object('statue'), {
 					'name': 'statue',
 					'x': 6,
 					'y': 0,
@@ -26,8 +26,8 @@ class Zone3 extends Zone {
 					'roty': 91,
 					'rotz': 0,
 					'materialize': true
-				})),
-				new ModelObject(this.Store.getters.object('chestnut', {
+				}),
+				new ModelObject(this.Store.getters.object('chestnut'), {
 					'name': 'chestnut1-z3',
 					'x': 14,
 					'y': 0,
@@ -37,8 +37,8 @@ class Zone3 extends Zone {
 					'rotx': 0,
 					'roty': 175,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('shrub', {
+				}),
+				new ModelObject(this.Store.getters.object('shrub'), {
 					'name': 'shrub1-z3',
 					'x': 10,
 					'y': 0,
@@ -48,8 +48,8 @@ class Zone3 extends Zone {
 					'rotx': 0,
 					'roty': 0,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('shrub', {
+				}),
+				new ModelObject(this.Store.getters.object('shrub'), {
 					'name': 'shrub2-z3',
 					'x': 13,
 					'y': 0,
@@ -59,8 +59,8 @@ class Zone3 extends Zone {
 					'rotx': 0,
 					'roty': 0,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('shrub', {
+				}),
+				new ModelObject(this.Store.getters.object('shrub'), {
 					'name': 'shrub3-z3',
 					'x': 14,
 					'y': 0,
@@ -70,7 +70,7 @@ class Zone3 extends Zone {
 					'rotx': 0,
 					'roty': 0,
 					'rotz': 0
-				}))
+				})
 			];
 
 			super.init(objs);

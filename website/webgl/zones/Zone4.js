@@ -15,7 +15,7 @@ class Zone4 extends Zone {
 	init() {
 		return new Promise(resolve => {
 			const objs = [
-				new ModelObject(this.Store.getters.object('fountain', {
+				new ModelObject(this.Store.getters.object('fountain'), {
 					'name': 'fountain',
 					'x': 17,
 					'y': 0.35,
@@ -26,8 +26,8 @@ class Zone4 extends Zone {
 					'roty': 0,
 					'rotz': 0,
 					'materialize': true
-				})),
-				new ModelObject(this.Store.getters.object('bench', {
+				}),
+				new ModelObject(this.Store.getters.object('bench'), {
 					'name': 'bench1-z4',
 					'x': 14,
 					'y': 0,
@@ -38,8 +38,8 @@ class Zone4 extends Zone {
 					'roty': 278,
 					'rotz': 0,
 					'materialize': true
-				})),
-				new ModelObject(this.Store.getters.object('bench', {
+				}),
+				new ModelObject(this.Store.getters.object('bench'), {
 					'name': 'bench2-z4',
 					'x': 13,
 					'y': 0,
@@ -50,8 +50,8 @@ class Zone4 extends Zone {
 					'roty': 345,
 					'rotz': 0,
 					'materialize': true
-				})),
-				new ModelObject(this.Store.getters.object('bench', {
+				}),
+				new ModelObject(this.Store.getters.object('bench'), {
 					'name': 'bench3-z4',
 					'x': 12,
 					'y': 0,
@@ -62,8 +62,8 @@ class Zone4 extends Zone {
 					'roty': 44,
 					'rotz': 0,
 					'materialize': true
-				})),
-				new ModelObject(this.Store.getters.object('bench', {
+				}),
+				new ModelObject(this.Store.getters.object('bench'), {
 					'name': 'bench4-z4',
 					'x': 22,
 					'y': 0,
@@ -74,8 +74,8 @@ class Zone4 extends Zone {
 					'roty': 234,
 					'rotz': 0,
 					'materialize': true
-				})),
-				new ModelObject(this.Store.getters.object('streetLamp', {
+				}),
+				new ModelObject(this.Store.getters.object('streetLamp'), {
 					'name': 'streetLamp1-z4',
 					'x': 17,
 					'y': 0,
@@ -85,8 +85,8 @@ class Zone4 extends Zone {
 					'rotx': 0,
 					'roty': 0,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('streetLamp', {
+				}),
+				new ModelObject(this.Store.getters.object('streetLamp'), {
 					'name': 'streetLamp2-z4',
 					'x': 13,
 					'y': 0,
@@ -96,8 +96,8 @@ class Zone4 extends Zone {
 					'rotx': 0,
 					'roty': 0,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('streetLamp', {
+				}),
+				new ModelObject(this.Store.getters.object('streetLamp'), {
 					'name': 'streetLamp3-z4',
 					'x': 12,
 					'y': 0,
@@ -107,8 +107,8 @@ class Zone4 extends Zone {
 					'rotx': 0,
 					'roty': 0,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('streetLamp', {
+				}),
+				new ModelObject(this.Store.getters.object('streetLamp'), {
 					'name': 'streetLamp4-z4',
 					'x': 20.6,
 					'y': 0,
@@ -118,7 +118,7 @@ class Zone4 extends Zone {
 					'rotx': 0,
 					'roty': 0,
 					'rotz': 0
-				}))
+				})
 			];
 			super.init(objs);
 

@@ -15,10 +15,10 @@ class ModelObject {
 		this.mesh = mesh;
 
 		for (let i = 0; i < this.mesh.children.length; i++) {
-			this.mesh.children[i].name = this.name;
+			this.mesh.name = this.name;
 		}
 
-		this.geometry = this.mesh.children[0].geometry;
+		this.geometry = this.mesh.geometry;
 
 		this.createMesh();
 	}

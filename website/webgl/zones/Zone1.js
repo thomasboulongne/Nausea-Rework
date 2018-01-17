@@ -10,7 +10,7 @@ class Zone1 extends Zone {
 	init() {
 		return new Promise(resolve => {
 			const objs = [
-				new ModelObject(this.Store.getters.object('chestnut', {
+				new ModelObject(this.Store.getters.object('chestnut'), {
 					'name': 'chestnut1-z1',
 					'x': 0,
 					'y': 0,
@@ -21,8 +21,8 @@ class Zone1 extends Zone {
 					'roty': 139,
 					'rotz': 0,
 					'materialize': true
-				})),
-				new ModelObject(this.Store.getters.object('bench', {
+				}),
+				new ModelObject(this.Store.getters.object('bench'), {
 					'name': 'bench-z1',
 					'x': -3,
 					'y': 0.15,
@@ -32,8 +32,8 @@ class Zone1 extends Zone {
 					'rotx': 0,
 					'roty': 130,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('mineral', {
+				}),
+				new ModelObject(this.Store.getters.object('mineral'), {
 					'name': 'mineral1',
 					'x': 2.5,
 					'y': 0,
@@ -43,8 +43,8 @@ class Zone1 extends Zone {
 					'rotx': 0,
 					'roty': 238,
 					'rotz': 0
-				})),
-				new ModelObject(this.Store.getters.object('mineral', {
+				}),
+				new ModelObject(this.Store.getters.object('mineral'), {
 					'name': 'mineral2',
 					'x': 2,
 					'y': 0,
@@ -54,8 +54,8 @@ class Zone1 extends Zone {
 					'rotx': 322,
 					'roty': 75,
 					'rotz': 258
-				})),
-				new ModelObject(this.Store.getters.object('mineral', {
+				}),
+				new ModelObject(this.Store.getters.object('mineral'), {
 					'name': 'mineral3',
 					'x': 1.6,
 					'y': 0,
@@ -65,7 +65,7 @@ class Zone1 extends Zone {
 					'rotx': 0,
 					'roty': 175,
 					'rotz': 0
-				}))
+				})
 			];
 
 			SoundManager.get(this.soundId).volume(3);

@@ -10,16 +10,15 @@ export const getObjects = function(Store) {
 		Store.dispatch('updateLoadedCount', loaded);
 	};
 
-	const AWDLoader = new THREE.AWDLoader(LoadingManager);
-
 	const promises = [];
 	assetsLists.objects.forEach(model => {
 		promises.push(
 			new Promise(resolve => {
+				const AWDLoader = new THREE.AWDLoader(LoadingManager);
 				AWDLoader.load('/assets3d/' + model.name + '.awd', mesh => {
 					Store.dispatch('addObject', {
 						name: model.name,
-						mesh: mesh
+						mesh: mesh.children[0]
 					});
 					resolve();
 				});

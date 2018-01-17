@@ -5,7 +5,7 @@ class Zone0 extends Zone {
 	init() {
 		return new Promise(resolve => {
 			this.roots = [
-				new ModelObject(this.Store.getters.object('root2', {
+				new ModelObject(this.Store.getters.object('root2'), {
 					'name': 'root0',
 					'color': 0xcacaca,
 					'x': 0,
@@ -16,8 +16,8 @@ class Zone0 extends Zone {
 					'roty': Math.PI / 2,
 					'rotz': 0,
 					'opacity': 1
-				})),
-				new ModelObject(this.Store.getters.object('root', {
+				}),
+				new ModelObject(this.Store.getters.object('root'), {
 					'name': 'root3',
 					'color': 0xcacaca,
 					'x': -0.9,
@@ -28,8 +28,8 @@ class Zone0 extends Zone {
 					'roty': Math.PI / 1.8,
 					'rotz': 0,
 					'opacity': 1
-				})),
-				new ModelObject(this.Store.getters.object('root02', {
+				}),
+				new ModelObject(this.Store.getters.object('root02'), {
 					'name': 'root2',
 					'color': 0xcacaca,
 					'x': 0.6,
@@ -40,8 +40,8 @@ class Zone0 extends Zone {
 					'roty': Math.PI / 2.4,
 					'rotz': 0,
 					'opacity': 1
-				})),
-				new ModelObject(this.Store.getters.object('root02', {
+				}),
+				new ModelObject(this.Store.getters.object('root02'), {
 					'name': 'root5',
 					'color': 0xcacaca,
 					'x': -1.6,
@@ -52,8 +52,8 @@ class Zone0 extends Zone {
 					'roty': Math.PI / 1.2,
 					'rotz': 0,
 					'opacity': 1
-				})),
-				new ModelObject(this.Store.getters.object('root02', {
+				}),
+				new ModelObject(this.Store.getters.object('root02'), {
 					'name': 'root1',
 					'color': 0xcacaca,
 					'x': -0.6,
@@ -64,8 +64,8 @@ class Zone0 extends Zone {
 					'roty': Math.PI / 1.8,
 					'rotz': 0,
 					'opacity': 1
-				})),
-				new ModelObject(this.Store.getters.object('root', {
+				}),
+				new ModelObject(this.Store.getters.object('root'), {
 					'name': 'root4',
 					'color': 0xcacaca,
 					'x': 0.6,
@@ -76,10 +76,10 @@ class Zone0 extends Zone {
 					'roty': Math.PI / 2.2,
 					'rotz': 0,
 					'opacity': 1
-				}))
+				})
 			];
 
-			const objs = this.roots.concat(new ModelObject(this.Store.getters.object('sartre_bench_xp', {
+			const objs = this.roots.concat(new ModelObject(this.Store.getters.object('sartre_bench_xp'), {
 				'name': 'sartre-bench',
 				'x': 0,
 				'y': 0,
@@ -90,7 +90,7 @@ class Zone0 extends Zone {
 				'rotz': 0,
 				'color': 0xcacaca,
 				'opacity': 1
-			})));
+			}));
 
 			super.init(objs);
 			this.initRootsTl();
@@ -99,78 +99,81 @@ class Zone0 extends Zone {
 	}
 
 	initRootsTl() {
-		this.rootsTl = new TimelineLite({ paused: true });
+		this.rootsTl = new TimelineLite({
+			paused: true,
+			onStart: () => { console.log('start roots animation'); }
+		});
 
 		this.rootsTl
-			.to(this.roots[0].mesh.position, 4, {
-				delay: 5,
-				y: -0.3
-			}, 0)
-			.to(this.roots[0].mesh.scale, 4, {
-				x: 3,
-				y: 3,
-				z: 3
-			}, 0);
+		.to(this.roots[0].mesh.position, 4, {
+			delay: 5,
+			y: -0.3
+		}, 0)
+		.to(this.roots[0].mesh.scale, 4, {
+			x: 3,
+			y: 3,
+			z: 3
+		}, 0);
 
 		this.rootsTl
-			.to(this.roots[1].mesh.position, 4, {
-				delay: 8,
-				y: -0.24
-			}, 1)
-			.to(this.roots[1].mesh.scale, 4, {
-				delay: 8,
-				x: 3,
-				y: 3,
-				z: 3
-			}, 1);
+		.to(this.roots[1].mesh.position, 4, {
+			delay: 8,
+			y: -0.24
+		}, 1)
+		.to(this.roots[1].mesh.scale, 4, {
+			delay: 8,
+			x: 3,
+			y: 3,
+			z: 3
+		}, 1);
 
 		this.rootsTl
-			.to(this.roots[2].mesh.position, 4, {
-				delay: 7,
-				y: 0
-			}, 2)
-			.to(this.roots[2].mesh.scale, 4, {
-				delay: 7,
-				x: 3,
-				y: 3,
-				z: 3
-			}, 2);
+		.to(this.roots[2].mesh.position, 4, {
+			delay: 7,
+			y: 0
+		}, 2)
+		.to(this.roots[2].mesh.scale, 4, {
+			delay: 7,
+			x: 3,
+			y: 3,
+			z: 3
+		}, 2);
 
 		this.rootsTl
-			.to(this.roots[3].mesh.position, 4, {
-				delay: 5,
-				y: 0.02
-			}, 3)
-			.to(this.roots[3].mesh.scale, 4, {
-				delay: 5,
-				x: 2,
-				y: 2,
-				z: 2
-			}, 3);
+		.to(this.roots[3].mesh.position, 4, {
+			delay: 5,
+			y: 0.02
+		}, 3)
+		.to(this.roots[3].mesh.scale, 4, {
+			delay: 5,
+			x: 2,
+			y: 2,
+			z: 2
+		}, 3);
 
 		this.rootsTl
-			.to(this.roots[4].mesh.position, 4, {
-				delay: 6,
-				y: 0.15
-			}, 4)
-			.to(this.roots[4].mesh.scale, 4, {
-				delay: 6,
-				x: 3,
-				y: 3,
-				z: 3
-			}, 4);
+		.to(this.roots[4].mesh.position, 4, {
+			delay: 6,
+			y: 0.15
+		}, 4)
+		.to(this.roots[4].mesh.scale, 4, {
+			delay: 6,
+			x: 3,
+			y: 3,
+			z: 3
+		}, 4);
 
 		this.rootsTl
-			.to(this.roots[5].mesh.position, 4, {
-				delay: 6,
-				y: 0.15
-			}, 5)
-			.to(this.roots[5].mesh.scale, 4, {
-				delay: 6,
-				x: 3,
-				y: 3,
-				z: 3
-			}, 5);
+		.to(this.roots[5].mesh.position, 4, {
+			delay: 6,
+			y: 0.15
+		}, 5)
+		.to(this.roots[5].mesh.scale, 4, {
+			delay: 6,
+			x: 3,
+			y: 3,
+			z: 3
+		}, 5);
 	}
 
 	initTimeline() {

@@ -185,7 +185,6 @@ const store = () => new Vuex.Store({
 			commit('UPDATE_HOME_CURSOR_ANIMATED', false);
 		},
 		addZone({ commit }, {name, number}) {
-			console.log('addZone', number, name);
 			commit('ADD_ZONE', {zoneName: name, zoneNumber: number});
 		},
 		updateWebglExpState({ commit }, expState) {
