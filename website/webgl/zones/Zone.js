@@ -57,7 +57,7 @@ class Zone {
 		this.timeline.to(this.tweenTime, 7, {
 			time: 2,
 			ease: Circ.easeOut,
-			onComplete: () => {
+			onReverseComplete: () => {
 				this.Store.dispatch('endZoneAnimation', this.number);
 			}
 		}, '1');

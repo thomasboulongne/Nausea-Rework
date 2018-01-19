@@ -275,7 +275,8 @@ class ExperienceScene {
 					this.onEnterZone();
 					this.zones[this.Store.getters.exp.raycast.zone].playAnim();
 					this.Store.dispatch('endExpCursorAnimation');
-				});
+				})
+				.catch(() => {});
 			} else {
 				this.cursor.onMouseLeave();
 			}

@@ -100,8 +100,7 @@ class Zone0 extends Zone {
 
 	initRootsTl() {
 		this.rootsTl = new TimelineLite({
-			paused: true,
-			onStart: () => { console.log('start roots animation'); }
+			paused: true
 		});
 
 		this.rootsTl

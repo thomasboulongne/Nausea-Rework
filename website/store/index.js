@@ -206,7 +206,7 @@ const store = () => new Vuex.Store({
 			commit('UPDATE_RAYCAST_ENABLE', false);
 		},
 		updateRaycastZone({ commit, dispatch, getters }, number) {
-			if(number != getters.exp.raycast.zone) {
+			if(number != getters.exp.raycast.zone && !getters.exp.zones.find(zone => zone.number == number).displayed) {
 				dispatch('startExpCursorAnimation');
 			}
 			commit('UPDATE_RAYCAST_ZONE', number);
@@ -217,13 +217,15 @@ const store = () => new Vuex.Store({
 		endExpCursorAnimation({ commit }) {
 			commit('UPDATE_EXP_CURSOR_ANIMATED', false);
 		},
-		startZoneAnimation({commit}, zoneNumber) {
+		startZoneAnimation({ commit }, zoneNumber) {
+			console.log('startZoneAnimation');
 			commit('START_ZONE_ANIMATION', zoneNumber);
 			commit('UPDATE_RAYCAST_ENABLE', false);
 		},
 		endZoneAnimation({ commit }, zoneNumber) {
+			console.log('endZoneAnimation');
 			commit('END_ZONE_ANIMATION', zoneNumber);
-			commit('UPDATE_RAYCAST_ENABLE', false);
+			commit('UPDATE_RAYCAST_ENABLE', true);
 		}
 	},
 
