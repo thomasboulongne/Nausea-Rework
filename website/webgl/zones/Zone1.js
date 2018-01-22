@@ -5,6 +5,7 @@ import DataEmitter from '../objects/DataEmitter';
 
 import SoundManager from '~/core/SoundManager';
 import ModelObject from '../objects/ModelObject';
+import ChromaKeyPlane from '../objects/ChromaKeyPlane';
 
 class Zone1 extends Zone {
 	addObjects() {
@@ -64,6 +65,26 @@ class Zone1 extends Zone {
 				'rotx': 0,
 				'roty': 175,
 				'rotz': 0
+			}),
+			new ChromaKeyPlane('business_sitting', {
+				'r': 1,
+				'g': 1,
+				'b': 1,
+				'x': -3.2,
+				'y': 0.7,
+				'z': 10.3,
+				'rotY': -1,
+				'opacity': 0
+			}),
+			new ChromaKeyPlane('man_sitting_tree', {
+				'r': 1,
+				'g': 1,
+				'b': 1,
+				'x': 1.3,
+				'y': 0.68,
+				'z': 10.3,
+				'rotY': 1,
+				'opacity': 0
 			})
 		];
 

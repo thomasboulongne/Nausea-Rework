@@ -6,7 +6,6 @@ import Config from '~/config.json';
 import Field from './objects/Field';
 import Particles from './objects/Particles';
 import Skybox from './objects/Skybox';
-import ChromaKeyPlane from './objects/ChromaKeyPlane';
 
 import SoundManager from '~/core/SoundManager';
 
@@ -145,39 +144,6 @@ class ExperienceScene {
 			this.add(this.field.mesh);
 			this.add(this.particles.mesh);
 		});
-
-
-		this.videos = [];
-
-		this.videos.push(new ChromaKeyPlane('business_sitting', {
-			r: 1,
-			g: 1,
-			b: 1,
-			x: -3.2,
-			y: 0.7,
-			z: 10.3,
-			rotY: -1
-		}));
-
-		this.videos.push(new ChromaKeyPlane('man_sitting_tree', {
-			r: 1,
-			g: 1,
-			b: 1,
-			x: 1.3,
-			y: 0.68,
-			z: 10.3,
-			rotY: 1
-		}));
-
-		this.videos.push(new ChromaKeyPlane('couple', {
-			r: 1,
-			g: 1,
-			b: 1,
-			x: -13,
-			y: 1.4,
-			z: -0.3,
-			rotY: 1
-		}));
 	}
 
 	createZones() {
@@ -322,22 +288,6 @@ class ExperienceScene {
 		}
 
 		TweenMax.to(this.scene.fog, 1, { density: 0.08 });
-
-		switch(idZone) {
-			case 1:
-				this.add(this.videos[0].mesh);
-				this.videos[0].play();
-				setTimeout(() => {
-					this.add(this.videos[1].mesh);
-					this.videos[1].play();
-				}
-					, 2000);
-				break;
-			case 2:
-				this.add(this.videos[2].mesh);
-				this.videos[2].play();
-				break;
-		}
 	}
 
 	render() {

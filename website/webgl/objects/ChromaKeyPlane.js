@@ -20,6 +20,8 @@ class ChromaKeyPlane {
 
 		this.material = new ChromaKeyMaterial('./assets2d/videos/' + this.video + '.mp4', r, g, b, 0.07, { loop: false, autoplay: false });
 
+		this.material = options.opacity ? options.opacity : 1;
+
 		let width = options.width ? options.width : 2;
 		let height = options.height ? options.height : 2;
 		let plane = new THREE.PlaneGeometry(width, height);

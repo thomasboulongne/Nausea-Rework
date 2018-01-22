@@ -1,6 +1,7 @@
 import Zone from './Zone';
 
 import ModelObject from '../objects/ModelObject';
+import ChromaKeyPlane from '../objects/ChromaKeyPlane';
 
 import Spline from '../objects/Spline';
 
@@ -101,6 +102,16 @@ class Zone2 extends Zone {
 				'rotx': 0,
 				'roty': 0,
 				'rotz': 0
+			}),
+			new ChromaKeyPlane('couple', {
+				'r': 1,
+				'g': 1,
+				'b': 1,
+				'x': -13,
+				'y': 1.4,
+				'z': -0.3,
+				'rotY': 1,
+				'opacity': 0
 			})
 		];
 
