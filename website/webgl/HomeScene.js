@@ -170,7 +170,8 @@ class HomeScene {
 			'x': 0,
 			'y': -0.22,
 			'z': 0,
-			'color': 0xcacaca
+			'color': 0xcacaca,
+			'opacity': 1
 		});
 
 		Promise.all([

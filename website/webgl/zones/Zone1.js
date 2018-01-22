@@ -7,87 +7,84 @@ import SoundManager from '~/core/SoundManager';
 import ModelObject from '../objects/ModelObject';
 
 class Zone1 extends Zone {
-	init() {
-		return new Promise(resolve => {
-			const objs = [
-				new ModelObject(this.Store.getters.object('chestnut'), {
-					'name': 'chestnut1-z1',
-					'x': 0,
-					'y': 0,
-					'z': 12,
-					'scale': 1,
-					'rotate': true,
-					'rotx': 0,
-					'roty': 139,
-					'rotz': 0,
-					'materialize': true
-				}),
-				new ModelObject(this.Store.getters.object('bench'), {
-					'name': 'bench-z1',
-					'x': -3,
-					'y': 0.15,
-					'z': 10.9,
-					'scale': 1,
-					'rotate': false,
-					'rotx': 0,
-					'roty': 130,
-					'rotz': 0
-				}),
-				new ModelObject(this.Store.getters.object('mineral'), {
-					'name': 'mineral1',
-					'x': 2.5,
-					'y': 0,
-					'z': 8,
-					'scale': 1.4,
-					'rotate': true,
-					'rotx': 0,
-					'roty': 238,
-					'rotz': 0
-				}),
-				new ModelObject(this.Store.getters.object('mineral'), {
-					'name': 'mineral2',
-					'x': 2,
-					'y': 0,
-					'z': 9.6,
-					'scale': 0.5,
-					'rotate': true,
-					'rotx': 322,
-					'roty': 75,
-					'rotz': 258
-				}),
-				new ModelObject(this.Store.getters.object('mineral'), {
-					'name': 'mineral3',
-					'x': 1.6,
-					'y': 0,
-					'z': 6.2,
-					'scale': 0.5,
-					'rotate': true,
-					'rotx': 0,
-					'roty': 175,
-					'rotz': 0
-				})
-			];
+	addObjects() {
+		const objects = [
+			new ModelObject(this.Store.getters.object('chestnut'), {
+				'name': 'chestnut1-z1',
+				'x': 0,
+				'y': 0,
+				'z': 12,
+				'scale': 1,
+				'rotate': true,
+				'rotx': 0,
+				'roty': 139,
+				'rotz': 0,
+				'materialize': true
+			}),
+			new ModelObject(this.Store.getters.object('bench'), {
+				'name': 'bench-z1',
+				'x': -3,
+				'y': 0.15,
+				'z': 10.9,
+				'scale': 1,
+				'rotate': false,
+				'rotx': 0,
+				'roty': 130,
+				'rotz': 0
+			}),
+			new ModelObject(this.Store.getters.object('mineral'), {
+				'name': 'mineral1',
+				'x': 2.5,
+				'y': 0,
+				'z': 8,
+				'scale': 1.4,
+				'rotate': true,
+				'rotx': 0,
+				'roty': 238,
+				'rotz': 0
+			}),
+			new ModelObject(this.Store.getters.object('mineral'), {
+				'name': 'mineral2',
+				'x': 2,
+				'y': 0,
+				'z': 9.6,
+				'scale': 0.5,
+				'rotate': true,
+				'rotx': 322,
+				'roty': 75,
+				'rotz': 258
+			}),
+			new ModelObject(this.Store.getters.object('mineral'), {
+				'name': 'mineral3',
+				'x': 1.6,
+				'y': 0,
+				'z': 6.2,
+				'scale': 0.5,
+				'rotate': true,
+				'rotx': 0,
+				'roty': 175,
+				'rotz': 0
+			})
+		];
 
-			SoundManager.get(this.soundId).volume(3);
+		SoundManager.get(this.soundId).volume(3);
 
-			this.datas = new DataEmitter(this.controlsContainer, ['chest1', 'chest2', 'chest3'], {
-				x: 0,
-				y: 4,
-				z: 12,
-				particles: 20,
-				side: 3.5,
-				minDistance: 1.15
-			});
-
-			super.init(objs);
-			this.initSpline();
-			resolve();
+		this.datas = new DataEmitter(this.controlsContainer, ['chest1', 'chest2', 'chest3'], {
+			x: 0,
+			y: 4,
+			z: 12,
+			particles: 20,
+			side: 3.5,
+			minDistance: 1.15
 		});
+
+		objects.forEach(object => {
+			this.add(object.mesh);
+		});
+
+		this.initSpline();
 	}
 
-	/**
-	 * @Spline
-	 */
 	initSpline() {
 		this.splinePoints = [
 			new THREE.Vector3(0, 0, 0),
@@ -99,10 +96,10 @@ class Zone1 extends Zone {
 			new THREE.Vector3(-3, 1.5, 11),
 			new THREE.Vector3(-1, 2, 8)
 		];
-		this.spline = new Spline(this.objects[0].mesh.position, this.controlsContainer, this.zoomParams, this.splinePoints, this.id);
+
+		this.spline = new Spline(this.children[0].position, this.controlsContainer, this.zoomParams, this.splinePoints, this.id);
 		this.spline.init();
 	}
-
 }
 
 export default Zone1;

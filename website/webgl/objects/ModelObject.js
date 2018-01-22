@@ -3,10 +3,6 @@ import VertexShader from '../shaders/ModelObject/shader.vert';
 import * as NumberUtils from '../utils/NumberUtils';
 
 class ModelObject {
-
-	/**
-	 * @constructor
-	 */
 	constructor(mesh, options = {}) {
 		this.name = options.name;
 		this.options = options;
@@ -34,7 +30,8 @@ class ModelObject {
 				color: this.options.color,
 				lights: true,
 				fog: true,
-				transparent: true
+				transparent: true,
+				opacity: this.options.opacity ? this.options.opacity : 0
 			});
 		}
 
@@ -120,7 +117,6 @@ class ModelObject {
 		}
 		this.geometry.addAttribute('displacement', new THREE.BufferAttribute(displacement, 3));
 	}
-
 }
 
 export default ModelObject;

@@ -2,51 +2,43 @@ import SoundManager from '~/core/SoundManager';
 
 import * as NumberUtils from '../utils/NumberUtils';
 
-class Zone {
-	constructor(Store, orientation = { x: [0, 0], y: [0, 0] }, controlsContainer, zoomParams = {strength: 0.0025}, id, name, number, soundId) {
+class Zone extends THREE.Group {
+	constructor(Store, controlsContainer, orientation = { x: [0, 0], y: [0, 0] }, zoomParams = {strength: 0.0025}, name = '', number = 0, soundId = 0) {
+		super();
 		this.Store = Store;
 
 		this.controlsContainer = controlsContainer;
 		this.zoomParams = zoomParams;
-		this.id = id;
 
 		this.soundId = soundId;
 
 		this.animated = false;
 
-		this.objects = [];
-
 		this.orientation = orientation;
-
 		this.number = number;
+		this.soundsEndZone = ['04', '10'];
+		SoundManager.get('materialize').volume(0.35);
+
+		this.addObjects();
+
 		this.Store.dispatch('addZone', {name: name, number: number});
 	}
 
-	init(objs) {
-		for (let i = 0; i < objs.length; i++) {
-			const obj = objs[i];
-			if(!(obj.options.materialize)) {
-				obj.material.opacity = obj.options.opacity ? obj.options.opacity : 0;
-			}
-			this.objects.push(obj);
-		}
-
-		SoundManager.get('materialize').volume(0.35);
-		this.soundsEndZone = ['04', '10'];
+	addObjects() {
+		throw new Error('addObjects is not implemented in this zone');
 	}
 
 	initHoverTimeline() {
 		this.hoverTl = new TimelineMax({ paused: true });
 
-		for (let i = 0; i < this.objects.length; i++) {
-			let obj = this.objects[i];
-			if(obj.material.fragmentShader) {
-				this.hoverTl.to(obj.material.uniforms.opacity, 3.1, { value: 1 }, 0);
-				if(obj.options.rotate) {
-					this.hoverTl.to(obj.mesh.rotation, 3.1, { y: NumberUtils.toRadians(10), ease: Circ.easeInOut }, 0);
+		this.children.forEach(object => {
+			if(object.material.fragmentShader) {
+				this.hoverTl.to(object.material.uniforms.opacity, 3.1, { value: 1 }, 0);
+				if(object.options.rotate) {
+					this.hoverTl.to(object.mesh.rotation, 3.1, { y: NumberUtils.toRadians(10), ease: Circ.easeInOut }, 0);
 				}
 			}
-		}
+		});
 	}
 
 	initTimeline() {
@@ -70,9 +62,9 @@ class Zone {
 	playAnim() {
 		this.Store.dispatch('startZoneAnimation', this.number);
 		this.animated = true;
-		for (let i = 0; i < this.objects.length; i++) {
-			this.objects[i].material.transparent = false;
-		}
+		this.children.forEach(obj => {
+			obj.material.transparent = false;
+		});
 		this.playTimeline();
 
 		this.zoomParams.strength = 0.020;
@@ -81,27 +73,26 @@ class Zone {
 			this.spline.enableSpline();
 		});
 
-		for (let i = 0; i < this.objects.length; i++) {
-			const curObj = this.objects[i];
-			if(curObj.options.rotate) {
-				this.timeline.to(curObj.mesh.rotation, 11, { 'y': NumberUtils.toRadians(curObj.roty), ease: Circ.easeInOut }, '0');
+		this.children.forEach(object => {
+			if(object.options.rotate) {
+				this.timeline.to(object.mesh.rotation, 11, { 'y': NumberUtils.toRadians(object.roty), ease: Circ.easeInOut }, '0');
 			}
 
-			if(!(curObj.options.materialize)) {
-				this.timeline.to(curObj.material, 3, {
+			if(!(object.options.materialize)) {
+				this.timeline.to(object.material, 3, {
 					'opacity': 1,
 					ease: Expo.easeOut,
 					onComplete: () => {
-						curObj.material.transparent = false;
+						object.material.transparent = false;
 					}
 				}, '0');
-				this.timeline.fromTo(curObj.mesh.scale, 3,
+				this.timeline.fromTo(object.mesh.scale, 3,
 					{ 'x': 0.6, y: '0.8', z: '0.8', ease: Expo.easeOut },
 					{ 'x': 1.2, y: '1.2', z: '1.2', ease: Expo.easeOut },
 					'0');
-				this.timeline.from(curObj.mesh.rotation, 3, { 'y': NumberUtils.toRadians(-10) }, '0');
+				this.timeline.from(object.mesh.rotation, 3, { 'y': NumberUtils.toRadians(-10) }, '0');
 			}
-		}
+		});
 
 		SoundManager.play('materialize');
 	}
@@ -125,9 +116,7 @@ class Zone {
 	}
 
 	addToGUI(gui) {
-		for (let i = 0; i < this.objects.length; i++) {
-			let object = this.objects[i].object.mesh;
-
+		this.children.forEach(object => {
 			let folder = gui.addFolder(object.name);
 
 			folder.add(object.position, 'x', -50, 50).name('posx');
@@ -156,16 +145,16 @@ class Zone {
 				let angle = NumberUtils.toRadians(degValue);
 				object.rotation.z = angle;
 			});
-		}
+		});
 	}
 
 	update() {
 		if(this.animate) {
-			for (let i = 0; i < this.objects.length; i++) {
-				if(this.objects[i].options.materialize) {
-					this.objects[i].material.uniforms.time.value = this.tweenTime.time;
+			this.children.forEach(object => {
+				if(object.options.materialize) {
+					object.material.uniforms.time.value = this.tweenTime.time;
 				}
-			}
+			});
 		}
 
 		if(this.datas) {

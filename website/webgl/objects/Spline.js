@@ -1,10 +1,6 @@
 import SoundManager from '~/core/SoundManager';
 
 class Spline {
-
-	/**
-	* @constructor
-	*/
 	constructor(target, controlsContainer, zoomParams, points, zoneSpline = 0) {
 		this.target = target;
 		this.zoomParams = zoomParams;
@@ -64,7 +60,6 @@ class Spline {
 		}, '-=1.5');
 	}
 
-
 	createGeometry() {
 		this.geometry = new THREE.Geometry();
 		this.geometry.vertices = this.curve.getPoints(50);
@@ -86,11 +81,6 @@ class Spline {
 		this.enabled = false;
 	}
 
-	/**
-	 * @method
-	 * @name update
-	 * @description Triggered on every TweenMax tick
-	 */
 	update() {
 		if(this.enabled) {
 			let prevCamPos = this.curve.getPoint(this.tweenTime.time);

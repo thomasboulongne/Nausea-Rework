@@ -206,8 +206,10 @@ const store = () => new Vuex.Store({
 			commit('UPDATE_RAYCAST_ENABLE', false);
 		},
 		updateRaycastZone({ commit, dispatch, getters }, number) {
-			if(number != getters.exp.raycast.zone && !getters.exp.zones.find(zone => zone.number == number).displayed) {
+			if(number != null && number != getters.exp.raycast.zone && !getters.exp.zones.find(zone => zone.number == number).animated && !getters.exp.zones.find(zone => zone.number == number).displayed) {
 				dispatch('startExpCursorAnimation');
+			} else if(number == null) {
+				dispatch('endExpCursorAnimation');
 			}
 			commit('UPDATE_RAYCAST_ZONE', number);
 		},

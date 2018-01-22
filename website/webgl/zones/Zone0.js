@@ -2,100 +2,100 @@ import Zone from './Zone';
 import ModelObject from '../objects/ModelObject';
 
 class Zone0 extends Zone {
-	init() {
-		return new Promise(resolve => {
-			this.roots = [
-				new ModelObject(this.Store.getters.object('root2'), {
-					'name': 'root0',
-					'color': 0xcacaca,
-					'x': 0,
-					'y': -2,
-					'z': 5,
-					'scale': 1,
-					'rotx': -0.05,
-					'roty': Math.PI / 2,
-					'rotz': 0,
-					'opacity': 1
-				}),
-				new ModelObject(this.Store.getters.object('root'), {
-					'name': 'root3',
-					'color': 0xcacaca,
-					'x': -0.9,
-					'y': -2.8,
-					'z': 7,
-					'scale': 1,
-					'rotx': -0.05,
-					'roty': Math.PI / 1.8,
-					'rotz': 0,
-					'opacity': 1
-				}),
-				new ModelObject(this.Store.getters.object('root02'), {
-					'name': 'root2',
-					'color': 0xcacaca,
-					'x': 0.6,
-					'y': -2.8,
-					'z': 7,
-					'scale': 1,
-					'rotx': -0.15,
-					'roty': Math.PI / 2.4,
-					'rotz': 0,
-					'opacity': 1
-				}),
-				new ModelObject(this.Store.getters.object('root02'), {
-					'name': 'root5',
-					'color': 0xcacaca,
-					'x': -1.6,
-					'y': -2.8,
-					'z': 8,
-					'scale': 1,
-					'rotx': -0.05,
-					'roty': Math.PI / 1.2,
-					'rotz': 0,
-					'opacity': 1
-				}),
-				new ModelObject(this.Store.getters.object('root02'), {
-					'name': 'root1',
-					'color': 0xcacaca,
-					'x': -0.6,
-					'y': -2.8,
-					'z': 10,
-					'scale': 1,
-					'rotx': -0.12,
-					'roty': Math.PI / 1.8,
-					'rotz': 0,
-					'opacity': 1
-				}),
-				new ModelObject(this.Store.getters.object('root'), {
-					'name': 'root4',
-					'color': 0xcacaca,
-					'x': 0.6,
-					'y': -2.8,
-					'z': 11,
-					'scale': 1,
-					'rotx': -0.05,
-					'roty': Math.PI / 2.2,
-					'rotz': 0,
-					'opacity': 1
-				})
-			];
-
-			const objs = this.roots.concat(new ModelObject(this.Store.getters.object('sartre_bench_xp'), {
-				'name': 'sartre-bench',
-				'x': 0,
-				'y': 0,
-				'z': 0.2,
-				'scale': 1,
-				'rotx': 0,
-				'roty': 270,
-				'rotz': 0,
+	addObjects() {
+		this.roots = [
+			new ModelObject(this.Store.getters.object('root2'), {
+				'name': 'root0',
 				'color': 0xcacaca,
+				'x': 0,
+				'y': -2,
+				'z': 5,
+				'scale': 1,
+				'rotx': -0.05,
+				'roty': Math.PI / 2,
+				'rotz': 0,
 				'opacity': 1
-			}));
+			}),
+			new ModelObject(this.Store.getters.object('root'), {
+				'name': 'root3',
+				'color': 0xcacaca,
+				'x': -0.9,
+				'y': -2.8,
+				'z': 7,
+				'scale': 1,
+				'rotx': -0.05,
+				'roty': Math.PI / 1.8,
+				'rotz': 0,
+				'opacity': 1
+			}),
+			new ModelObject(this.Store.getters.object('root02'), {
+				'name': 'root2',
+				'color': 0xcacaca,
+				'x': 0.6,
+				'y': -2.8,
+				'z': 7,
+				'scale': 1,
+				'rotx': -0.15,
+				'roty': Math.PI / 2.4,
+				'rotz': 0,
+				'opacity': 1
+			}),
+			new ModelObject(this.Store.getters.object('root02'), {
+				'name': 'root5',
+				'color': 0xcacaca,
+				'x': -1.6,
+				'y': -2.8,
+				'z': 8,
+				'scale': 1,
+				'rotx': -0.05,
+				'roty': Math.PI / 1.2,
+				'rotz': 0,
+				'opacity': 1
+			}),
+			new ModelObject(this.Store.getters.object('root02'), {
+				'name': 'root1',
+				'color': 0xcacaca,
+				'x': -0.6,
+				'y': -2.8,
+				'z': 10,
+				'scale': 1,
+				'rotx': -0.12,
+				'roty': Math.PI / 1.8,
+				'rotz': 0,
+				'opacity': 1
+			}),
+			new ModelObject(this.Store.getters.object('root'), {
+				'name': 'root4',
+				'color': 0xcacaca,
+				'x': 0.6,
+				'y': -2.8,
+				'z': 11,
+				'scale': 1,
+				'rotx': -0.05,
+				'roty': Math.PI / 2.2,
+				'rotz': 0,
+				'opacity': 1
+			})
+		];
 
-			super.init(objs);
-			this.initRootsTl();
-			resolve();
+		const objects = this.roots.concat(new ModelObject(this.Store.getters.object('sartre_bench_xp'), {
+			'name': 'sartre-bench',
+			'x': 0,
+			'y': 0,
+			'z': 0.2,
+			'scale': 1,
+			'rotx': 0,
+			'roty': 270,
+			'rotz': 0,
+			'color': 0xcacaca,
+			'opacity': 1
+		}));
+
+		objects.forEach(object => {
+			this.add(object.mesh);
 		});
+
+		this.initRootsTl();
 	}
 
 	initRootsTl() {

@@ -61,6 +61,8 @@ class ExperienceScene {
 
 		this.createObjects();
 
+		this.createZones();
+
 		this.addEventListeners();
 	}
 
@@ -94,9 +96,6 @@ class ExperienceScene {
 		}
 	}
 
-	/**
-	 * Add the possprocess composer and the passes
-	 */
 	setComposer() {
 		this.composer = new EffectComposer(this.renderer);
 
@@ -145,32 +144,6 @@ class ExperienceScene {
 			this.scene.background = this.whiteSkybox.texture;
 			this.add(this.field.mesh);
 			this.add(this.particles.mesh);
-
-			this.zones = [
-				new Zone0(this.Store),
-				new Zone1(this.Store, { x: [882, 1059], y: [541, 674] }, this.controlsContainer, {strength: 0.0025}, 1, 'Le Maronnier', 1, '03'),
-				new Zone2(this.Store, { x: [1407, 1640], y: [555, 696] }, this.controlsContainer, {strength: 0.0025}, 2, 'Le Kiosque', 2, '06'),
-				new Zone3(this.Store, { x: [132, 252], y: [553, 677] }, this.controlsContainer, {strength: 0.0025}, 3, 'La Statue', 3, '05'),
-				new Zone4(this.Store, { x: [459, 552], y: [592, 677] }, this.controlsContainer, {strength: 0.0025}, 4, 'La Fontaine', 4, '07')
-			];
-
-			Promise.all([
-				this.zones[0].init(),
-				this.zones[1].init(),
-				this.zones[2].init(),
-				this.zones[3].init(),
-				this.zones[4].init()
-			])
-			.then(() => {
-				for (let i = 0; i < this.zones.length; i++) {
-					for (let j = 0; j < this.zones[i].objects.length; j++) {
-						this.add(this.zones[i].objects[j].mesh);
-					}
-					this.zones[i].initTimeline();
-				}
-
-				this.intro();
-			});
 		});
 
 
@@ -205,6 +178,22 @@ class ExperienceScene {
 			z: -0.3,
 			rotY: 1
 		}));
+	}
+
+	createZones() {
+		this.zones = [
+			new Zone0(this.Store),
+			new Zone1(this.Store, this.controlsContainer, { x: [882, 1059], y: [541, 674] }, { strength: 0.0025 }, 'Le Maronnier', 1, '03'),
+			new Zone2(this.Store, this.controlsContainer, { x: [1407, 1640], y: [555, 696] }, { strength: 0.0025 }, 'Le Kiosque', 2, '06'),
+			new Zone3(this.Store, this.controlsContainer, { x: [132, 252], y: [553, 677] }, { strength: 0.0025 }, 'La Statue', 3, '05'),
+			new Zone4(this.Store, this.controlsContainer, { x: [459, 552], y: [592, 677] }, { strength: 0.0025 }, 'La Fontaine', 4, '07')
+		];
+
+		this.zones.forEach(zone => {
+			this.add(zone);
+		});
+
+		this.intro();
 	}
 
 	intro() {
@@ -355,9 +344,7 @@ class ExperienceScene {
 		if(this.zones) {
 			let mouse = this.controls.mouse;
 			let raycastedZone = null;
-			for (let i = 0; i < this.zones.length; i++) {
-				let zone = this.zones[i];
-
+			this.zones.forEach(zone => {
 				zone.update();
 
 				if(
@@ -366,9 +353,9 @@ class ExperienceScene {
 					mouse.y > window.innerHeight * zone.orientation.y[0] / 1299 &&
 					mouse.y < window.innerHeight * zone.orientation.y[1] / 1299
 				) {
-					raycastedZone = i;
+					raycastedZone = zone.number;
 				}
-			}
+			});
 
 			this.Store.dispatch('updateRaycastZone', raycastedZone);
 		}
