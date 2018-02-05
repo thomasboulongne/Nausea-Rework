@@ -226,11 +226,7 @@ class ExperienceScene {
 		this.Store.watch((state, getters) => getters.exp.cursor.animated, animated => {
 			if(animated) {
 				this.cursor.onMouseEnter()
-				.then(() => {
-					this.onEnterZone();
-					this.zones[this.Store.getters.exp.raycast.zone].playAnim();
-					this.Store.dispatch('endExpCursorAnimation');
-				})
+				.then(this.onEnterZone)
 				.catch(() => {});
 			} else {
 				this.cursor.onMouseLeave();
@@ -259,6 +255,8 @@ class ExperienceScene {
 	}
 
 	onEnterZone() {
+		this.zones[this.Store.getters.exp.raycast.zone].playAnim();
+		this.Store.dispatch('endExpCursorAnimation');
 		TweenMax.to(this.scene.fog, 1, { density: 0.12, delay: 1 });
 	}
 
