@@ -72,15 +72,6 @@ class Spline {
 		this.scene.add(this.line);
 	}
 
-	enableSpline() {
-		this.enabled = true;
-		this.timeline.play();
-	}
-
-	disableSpline() {
-		this.enabled = false;
-	}
-
 	update() {
 		if(this.enabled) {
 			let prevCamPos = this.curve.getPoint(this.tweenTime.time);

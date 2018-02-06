@@ -220,12 +220,10 @@ const store = () => new Vuex.Store({
 			commit('UPDATE_EXP_CURSOR_ANIMATED', false);
 		},
 		startZoneAnimation({ commit }, zoneNumber) {
-			console.log('startZoneAnimation');
 			commit('START_ZONE_ANIMATION', zoneNumber);
 			commit('UPDATE_RAYCAST_ENABLE', false);
 		},
 		endZoneAnimation({ commit }, zoneNumber) {
-			console.log('endZoneAnimation');
 			commit('END_ZONE_ANIMATION', zoneNumber);
 			commit('UPDATE_RAYCAST_ENABLE', true);
 		}

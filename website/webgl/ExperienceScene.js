@@ -226,7 +226,9 @@ class ExperienceScene {
 		this.Store.watch((state, getters) => getters.exp.cursor.animated, animated => {
 			if(animated) {
 				this.cursor.onMouseEnter()
-				.then(this.onEnterZone)
+				.then(() => {
+					this.onEnterZone();
+				})
 				.catch(() => {});
 			} else {
 				this.cursor.onMouseLeave();

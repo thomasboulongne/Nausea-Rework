@@ -65,13 +65,14 @@ class Zone extends THREE.Group {
 		this.children.forEach(obj => {
 			obj.material.transparent = false;
 		});
-		this.playTimeline();
 
 		this.zoomParams.strength = 0.020;
 
 		TweenMax.delayedCall(2, () => {
 			this.spline.enableSpline();
 		});
+
+		console.log('Sound: ', SoundManager.get(this.soundId));
 
 		this.children.forEach(object => {
 			if(object.options.rotate) {
