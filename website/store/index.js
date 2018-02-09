@@ -124,9 +124,9 @@ const store = () => new Vuex.Store({
 		UPDATE_EXP_CURSOR_ANIMATED(state, animated) {
 			state.WebGL.exp.cursor.animated = animated;
 		},
-		START_ZONE_ANIMATION(state, zoneNumber) {
-			state.WebGL.exp.animated = zoneNumber;
-			state.WebGL.exp.zones.find(zone => zone.number == zoneNumber).animated = true;
+		START_ZONE_ANIMATION(state) {
+			state.WebGL.exp.animated = state.WebGL.exp.raycast.zone;
+			state.WebGL.exp.zones.find(zone => zone.number == state.WebGL.exp.raycast.zone).animated = true;
 		},
 		END_ZONE_ANIMATION(state, zoneNumber) {
 			state.WebGL.exp.animated = null;
@@ -219,8 +219,8 @@ const store = () => new Vuex.Store({
 		endExpCursorAnimation({ commit }) {
 			commit('UPDATE_EXP_CURSOR_ANIMATED', false);
 		},
-		startZoneAnimation({ commit }, zoneNumber) {
-			commit('START_ZONE_ANIMATION', zoneNumber);
+		startZoneAnimation({ commit }) {
+			commit('START_ZONE_ANIMATION');
 			commit('UPDATE_RAYCAST_ENABLE', false);
 		},
 		endZoneAnimation({ commit }, zoneNumber) {

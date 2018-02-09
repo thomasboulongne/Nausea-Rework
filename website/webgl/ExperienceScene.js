@@ -148,11 +148,11 @@ class ExperienceScene {
 
 	createZones() {
 		this.zones = [
-			new Zone0(this.Store),
-			new Zone1(this.Store, this.controlsContainer, { x: [882, 1059], y: [541, 674] }, { strength: 0.0025 }, 'Le Maronnier', 1, '03'),
-			new Zone2(this.Store, this.controlsContainer, { x: [1407, 1640], y: [555, 696] }, { strength: 0.0025 }, 'Le Kiosque', 2, '06'),
-			new Zone3(this.Store, this.controlsContainer, { x: [132, 252], y: [553, 677] }, { strength: 0.0025 }, 'La Statue', 3, '05'),
-			new Zone4(this.Store, this.controlsContainer, { x: [459, 552], y: [592, 677] }, { strength: 0.0025 }, 'La Fontaine', 4, '07')
+			new Zone0(this.Store, {number: 0}),
+			new Zone1(this.Store, {controlsContainer: this.controlsContainer, orientation: { x: [882, 1059], y: [541, 674] }, zoomParams: { strength: 0.0025 }, name: 'Le Maronnier', number: 1, soundId: '03'}),
+			new Zone2(this.Store, {controlsContainer: this.controlsContainer, orientation: { x: [1407, 1640], y: [555, 696] }, zoomParams: { strength: 0.0025 }, name: 'Le Kiosque', number: 2, soundId: '06'}),
+			new Zone3(this.Store, {controlsContainer: this.controlsContainer, orientation: { x: [132, 252], y: [553, 677] }, zoomParams: { strength: 0.0025 }, name: 'La Statue', number: 3, soundId: '05'}),
+			new Zone4(this.Store, {controlsContainer: this.controlsContainer, orientation: { x: [459, 552], y: [592, 677] }, zoomParams: { strength: 0.0025 }, name: 'La Fontaine', number: 4, soundId: '07'})
 		];
 
 		this.zones.forEach(zone => {
@@ -257,7 +257,7 @@ class ExperienceScene {
 	}
 
 	onEnterZone() {
-		this.zones[this.Store.getters.exp.raycast.zone].playAnim();
+		this.Store.dispatch('startZoneAnimation');
 		this.Store.dispatch('endExpCursorAnimation');
 		TweenMax.to(this.scene.fog, 1, { density: 0.12, delay: 1 });
 	}
@@ -296,7 +296,6 @@ class ExperienceScene {
 			let raycastedZone = null;
 			this.zones.forEach(zone => {
 				zone.update();
-
 				if(
 					mouse.x > window.innerWidth * zone.orientation.x[0] / 1706 &&
 					mouse.x < window.innerWidth * zone.orientation.x[1] / 1706 &&

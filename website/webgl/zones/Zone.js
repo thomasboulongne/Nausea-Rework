@@ -3,7 +3,7 @@ import SoundManager from '~/core/SoundManager';
 import * as NumberUtils from '../utils/NumberUtils';
 
 class Zone extends THREE.Group {
-	constructor(Store, controlsContainer, orientation = { x: [0, 0], y: [0, 0] }, zoomParams = {strength: 0.0025}, name = '', number = 0, soundId = 0) {
+	constructor(Store, {controlsContainer, orientation = { x: [0, 0], y: [0, 0] }, zoomParams = {strength: 0.0025}, name = '', number = 0, soundId = 0}) {
 		super();
 		this.Store = Store;
 
@@ -21,7 +21,15 @@ class Zone extends THREE.Group {
 
 		this.addObjects();
 
+		this.addEventListeners();
+
 		this.Store.dispatch('addZone', {name: name, number: number});
+	}
+
+	addEventListeners() {
+		this.Store.watch((state, getters) => getters.exp.zones, zones => {
+			const zone = zones.find(zone => zone.animated == true);
+		});
 	}
 
 	addObjects() {
