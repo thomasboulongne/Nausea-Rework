@@ -3,7 +3,7 @@ import SoundManager from '~/core/SoundManager';
 import * as NumberUtils from '../utils/NumberUtils';
 
 class Zone extends THREE.Group {
-	constructor(Store, {controlsContainer, orientation = { x: [0, 0], y: [0, 0] }, zoomParams = {strength: 0.0025}, name = '', number = 0, soundId = 0}) {
+	constructor(Store, {controlsContainer, orientation = { x: [0, 0], y: [0, 0] }, zoomParams = {strength: 0.0025}, name = '', number = 0, soundId = 0, willAnimate = true}) {
 		super();
 		this.Store = Store;
 
@@ -21,14 +21,22 @@ class Zone extends THREE.Group {
 
 		this.addObjects();
 
+		this.animateSpline = false;
+
+		if(willAnimate) {
+			this.timelineInit();
+		}
+
 		this.addEventListeners();
 
 		this.Store.dispatch('addZone', {name: name, number: number});
 	}
 
 	addEventListeners() {
-		this.Store.watch((state, getters) => getters.exp.zones, zones => {
-			const zone = zones.find(zone => zone.animated == true);
+		this.Store.watch((state, getters) => getters.exp.animated.state, animationState => {
+			if(animationState == 'afterTitle' && this.Store.getters.exp.animated.zone == this.number) {
+				this.playTimeline();
+			}
 		});
 	}
 
@@ -36,51 +44,65 @@ class Zone extends THREE.Group {
 		throw new Error('addObjects is not implemented in this zone');
 	}
 
-	initHoverTimeline() {
-		this.hoverTl = new TimelineMax({ paused: true });
+	timelineInit() {
+		// this.initHoverTimeline();
 
-		this.children.forEach(object => {
-			if(object.material.fragmentShader) {
-				this.hoverTl.to(object.material.uniforms.opacity, 3.1, { value: 1 }, 0);
-				if(object.options.rotate) {
-					this.hoverTl.to(object.mesh.rotation, 3.1, { y: NumberUtils.toRadians(10), ease: Circ.easeInOut }, 0);
-				}
-			}
-		});
-	}
+		// Sound
+		// Spline
+		// Post Process
 
-	initTimeline() {
-		this.animate = true;
-		this.initHoverTimeline();
-		this.tweenTime = { time: 0 };
-		this.timeline = new TimelineMax({ paused: true });
-		this.timeline.to(this.tweenTime, 7, {
-			time: 2,
-			ease: Circ.easeOut,
-			onReverseComplete: () => {
+		this.timeline = new TimelineMax({
+			paused: true,
+			onComplete: () => {
+				setTimeout(() => {
+					this.animateSpline = false;
+				}, 200);
 				this.Store.dispatch('endZoneAnimation', this.number);
 			}
-		}, '1');
+		});
+
+		const soundDuration = SoundManager.get(this.soundId).duration().toFixed(2);
+		this.splineAnimationTime = { time: 0 };
+
+		this.timeline.add('start');
+
+		this.timeline.add(() => {
+			SoundManager.play(this.soundId);
+			SoundManager.play('materialize');
+		}, 'start');
+
+		this.timeline.add(() => {
+			this.animateSpline = true;
+		}, 'start');
+
+		this.timeline.to(this.splineAnimationTime, soundDuration, {
+			time: 1,
+			ease: Circ.easeOut
+		}, 'start');
+
+		this.timeline.add('reverse');
+
+		this.timeline.add(() => {
+			SoundManager.play('back');
+		}, 'reverse');
+
+		this.timeline.to(this.splineAnimationTime, soundDuration / 2, {
+			time: 0,
+			ease: Circ.easeIn
+		}, 'reverse');
 	}
 
 	playTimeline() {
 		this.timeline.play();
 	}
 
-	playAnim() {
-		this.Store.dispatch('startZoneAnimation', this.number);
+	playAnimation() {
 		this.animated = true;
 		this.children.forEach(obj => {
 			obj.material.transparent = false;
 		});
 
 		this.zoomParams.strength = 0.020;
-
-		TweenMax.delayedCall(2, () => {
-			this.spline.enableSpline();
-		});
-
-		console.log('Sound: ', SoundManager.get(this.soundId));
 
 		this.children.forEach(object => {
 			if(object.options.rotate) {
@@ -102,18 +124,12 @@ class Zone extends THREE.Group {
 				this.timeline.from(object.mesh.rotation, 3, { 'y': NumberUtils.toRadians(-10) }, '0');
 			}
 		});
-
-		SoundManager.play('materialize');
 	}
 
 	playEndZoneSound(id) {
 		TweenMax.delayedCall(3, () => {
 			SoundManager.play(this.soundsEndZone[id]);
 		});
-	}
-
-	playSound() {
-		SoundManager.play(this.soundId);
 	}
 
 	startHoverAnimation() {
@@ -161,17 +177,33 @@ class Zone extends THREE.Group {
 		if(this.animate) {
 			this.children.forEach(object => {
 				if(object.options.materialize) {
-					object.material.uniforms.time.value = this.tweenTime.time;
+					object.material.uniforms.time.value = this.splineAnimationTime.time;
 				}
 			});
 		}
 
-		if(this.datas) {
-			this.datas.update();
-		}
+		if(this.animateSpline) {
+			const time = this.splineAnimationTime.time;
+			let previousCameraPosition = this.spline.curve.getPoint(time >= 0.01 ? time - 0.01 : time);
 
-		if(this.spline) {
-			this.spline.update();
+			let cameraPosition = this.spline.curve.getPoint(this.splineAnimationTime.time);
+
+			let vector = {
+				x: this.spline.target.x - cameraPosition.x,
+				z: this.spline.target.z - cameraPosition.z
+			};
+
+			let angle = Math.atan2(vector.x, vector.z);
+
+			this.controlsContainer.position.z = cameraPosition.z;
+			this.controlsContainer.position.x = cameraPosition.x;
+			this.controlsContainer.position.y = cameraPosition.y;
+
+			this.controlsContainer.translateZ(cameraPosition.z - previousCameraPosition.z);
+			this.controlsContainer.translateX(cameraPosition.x - previousCameraPosition.x);
+			this.controlsContainer.translateY(cameraPosition.y - previousCameraPosition.y);
+
+			this.controlsContainer.rotation.y = angle;
 		}
 	}
 }

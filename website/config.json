@@ -11,10 +11,11 @@
 		"main_analytics": "UA-00000000-0"
 	},
 	"gl": {
-		"gui" : true,
+		"gui" : false,
 		"controls" : false,
 		"materialize" : false,
 		"dev": true,
-		"skipIntro": true
+		"skipIntro": true,
+		"debug": false
 	}
 }

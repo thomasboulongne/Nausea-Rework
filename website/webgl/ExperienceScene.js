@@ -148,7 +148,7 @@ class ExperienceScene {
 
 	createZones() {
 		this.zones = [
-			new Zone0(this.Store, {number: 0}),
+			new Zone0(this.Store, { number: 0, willAnimate: false }),
 			new Zone1(this.Store, {controlsContainer: this.controlsContainer, orientation: { x: [882, 1059], y: [541, 674] }, zoomParams: { strength: 0.0025 }, name: 'Le Maronnier', number: 1, soundId: '03'}),
 			new Zone2(this.Store, {controlsContainer: this.controlsContainer, orientation: { x: [1407, 1640], y: [555, 696] }, zoomParams: { strength: 0.0025 }, name: 'Le Kiosque', number: 2, soundId: '06'}),
 			new Zone3(this.Store, {controlsContainer: this.controlsContainer, orientation: { x: [132, 252], y: [553, 677] }, zoomParams: { strength: 0.0025 }, name: 'La Statue', number: 3, soundId: '05'}),

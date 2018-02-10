@@ -153,8 +153,7 @@ class Zone2 extends Zone {
 			new THREE.Vector3(-18, 1.5, -6),
 			new THREE.Vector3(-20, 1.5, 0)
 		];
-		this.spline = new Spline(this.children[0].position, this.controlsContainer, this.zoomParams, this.splinePoints, this.id);
-		this.spline.init();
+		this.spline = new Spline(this.children[0].position, this.zoomParams, this.splinePoints);
 	}
 }
 

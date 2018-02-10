@@ -20,14 +20,14 @@ export default {
 			return this.$store.getters.exp.zones.filter(zone => zone.displayed).length + 1;
 		},
 		chapterName: function() {
-			const zone = this.$store.getters.exp.zones.find(zone => zone.animated);
+			const zone = this.$store.getters.exp.zones.find(zone => zone.number == this.$store.getters.exp.animated.zone);
 			return zone ? zone.name : '';
 		}
 	},
 
 	watch: {
-		'$store.getters.exp.animated': function(animated) {
-			if(animated) {
+		'$store.getters.exp.animated.state': function(animationState) {
+			if(animationState == 'beforeTitle') {
 				this.tl.play();
 			}
 		}
@@ -38,7 +38,12 @@ export default {
 		this.canvas = this.scene.renderer.domElement;
 		this.$refs.webgl.appendChild(this.canvas);
 
-		this.tl = new TimelineLite({paused: true});
+		this.tl = new TimelineLite({
+			paused: true,
+			onReverseComplete: () => {
+				this.$store.dispatch('updateExpAnimationState', 'afterTitle');
+			}
+		});
 		this.tl.set(this.$refs.chapter, {
 			display: 'block'
 		})
